@@ -19,6 +19,18 @@ struct ApiGenre: Codable {
 	var name: String
 }
 
+extension ApiGenre {
+	var asCategory: MovieCategory {
+		.genre(self)
+	}
+}
+
+extension Array where Element == ApiGenre {
+	var asGenres: [Genre] {
+		map { Genre(from: $0) }
+	}
+}
+
 struct Genre: Codable, Identifiable, Hashable {
 	let id: Int
 	let name: String
@@ -82,7 +94,7 @@ struct Movie: GridElement, Codable, Hashable {
 				id: $0,
 				name: store.get(by: $0)?.name ?? "Unknown genre"
 			)
-		}.sorted { $0.name < $1.name }
+		}.sorted(by: \.name)
 	}
 	
 	var releaseYear: String {
@@ -105,7 +117,7 @@ struct Movie: GridElement, Codable, Hashable {
 	}
 	
 	func formattedGenres(_ store: GenresStore) -> String {
-		genres(store).map { $0.name }.joined(separator: ", ")
+		genres(store).map(\.name).joined(separator: ", ")
 	}
 }
 

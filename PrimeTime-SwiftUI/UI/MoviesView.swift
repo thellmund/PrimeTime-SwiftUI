@@ -15,7 +15,7 @@ struct MoviesView: View {
 	
 	@ObservedObject var dataSource = CombiningDataSource { (responses: [MoviesResponse]) -> [Movie] in
 		let results = responses.flatMap { $0.results }
-		return Array(Set(results.sorted { $0.popularity > $1.popularity }))
+		return Array(Set(results.sorted(by: \.popularity)))
 	}
 	
 	@State var isShowingDetail = false

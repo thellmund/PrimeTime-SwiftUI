@@ -313,7 +313,6 @@ struct URLImage: View {
 	@ObservedObject var imageFetcher: ImageFetcher
 	
 	var placeholder: Assets.Placeholder
-	var onLoaded: (UIImage) -> Void = { _ in }
 	
 	init(from url: URL?, withPlaceholder placeholder: Assets.Placeholder) {
 		self.imageFetcher = ImageFetcher(url: url)
@@ -322,7 +321,6 @@ struct URLImage: View {
 	
 	var body: some View {
 		if let image = imageFetcher.image {
-			onLoaded(image)
 			return AnyView(Image(uiImage: image).resizable())
 		} else {
 			return AnyView(

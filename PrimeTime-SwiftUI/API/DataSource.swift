@@ -16,21 +16,6 @@ enum ApiResult<T : Codable> {
 	case error
 }
 
-extension ApiResult {
-	func ifSuccess<Content: View>(success: (T) -> Content) -> some View {
-		switch self {
-		case .none:
-			return AnyView(EmptyView())
-		case .loading:
-			return AnyView(LoadingView())
-		case .success(let response):
-			return AnyView(success(response))
-		case .error:
-			return AnyView(PlaceholderView(title: "Hmm…", subtitle: "Some 1s and 0s didn’t transmit correctly."))
-		}
-	}
-}
-
 class DataSource<T : Codable>: ObservableObject {
 	var objectWillChange = PassthroughSubject<ApiResult<T>, Never>()
 	

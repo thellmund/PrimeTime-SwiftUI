@@ -48,9 +48,8 @@ struct SelectGenresView: View {
 		case .loading:
 			return AnyView(LoadingView())
 		case .success(let response):
-			let genres = response.genres.map { Genre(from: $0) }
 			return AnyView(
-				List(genres) { genre in
+				List(response.genres.asGenres) { genre in
 					GenresRow(
 						genre: genre,
 						isSelected: self.selectedGenres.contains(genre)
@@ -125,10 +124,15 @@ struct SelectMoviesView: View {
 	
 	var onFinish: () -> Void
 	
-	var body: some View {
-		VStack {
-			samplesDataSource.result.ifSuccess { samples in
-				Grid(data: samples, columns: 3) { result in
+	private var content: some View {
+		switch samplesDataSource.result {
+		case .none:
+			return AnyView(EmptyView())
+		case .loading:
+			return AnyView(LoadingView())
+		case .success(let response):
+			return AnyView(
+				Grid(data: response, columns: 3) { result in
 					SampleView(
 						sample: result,
 						isSelected: self.selectedMovies.contains(result)
@@ -140,8 +144,14 @@ struct SelectMoviesView: View {
 						}
 					}
 				}
-			}
-		}.onAppear {
+			)
+		case .error:
+			return AnyView(PlaceholderView(title: "Hmm…", subtitle: "Some 1s and 0s didn’t transmit correctly."))
+		}
+	}
+	
+	var body: some View {
+		content.onAppear {
 			let genreIDs = self.genresStore.favorites.map(\.id)
 			let endpoints = genreIDs.map { Endpoint.genreSamples(for: $0) }
 			self.samplesDataSource.query(endpoints)

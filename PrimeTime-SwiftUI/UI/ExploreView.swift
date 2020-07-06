@@ -23,8 +23,9 @@ struct ExploreView: View {
 		case .loading:
 			return AnyView(LoadingView())
 		case .success(let response):
-			let categories: [MovieCategory] = [.nowPlaying, .upcoming] + response.genres.map { .genre($0) }
-			return AnyView(CategoriesView(categories: categories))
+			return AnyView(
+				CategoriesView(categories: [.nowPlaying, .upcoming] + response.genres.map(\.asCategory))
+			)
 		case .error:
 			return AnyView(PlaceholderView(title: "Something went wrong", subtitle: "Try again later."))
 		}
