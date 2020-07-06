@@ -21,37 +21,6 @@ struct SearchView: View {
 	
 	@ObservedObject var dataSource = DataSource<MoviesResponse>()
 	
-	private var content: some View {
-		switch dataSource.result {
-		case .none:
-			return AnyView(EmptyView())
-		case .loading:
-			return AnyView(LoadingView())
-		case .success(let response):
-			if response.results.isEmpty {
-				return AnyView(PlaceholderView(title: "No results", subtitle: "Well, that’s embarrasing…"))
-			} else {
-				return AnyView(
-					List(response.results) { movie in
-						SearchResult(movie: movie)
-							.onTapGesture {
-								self.detailsMovie = movie
-								self.isShowingDetails = true
-						}
-					}
-					.sheet(isPresented: $isShowingDetails) {
-						MovieDetailsModalView(movie: self.detailsMovie)
-							.environmentObject(self.genresStore)
-							.environmentObject(self.historyStore)
-							.environmentObject(self.watchlistStore)
-					}
-				)
-			}
-		case .error:
-			return AnyView(PlaceholderView(title: "Oh no", subtitle: "Something went wrong"))
-		}
-	}
-	
 	var body: some View {
 		VStack {
 			SearchBarView(
@@ -59,7 +28,24 @@ struct SearchView: View {
 				onEnter: { self.dataSource.query(.search(self.text)) },
 				onCancel: { self.presentationMode.wrappedValue.dismiss() }
 			)
-			content
+			LoadableView(from: dataSource.result) { response in
+				if response.results.isEmpty {
+					PlaceholderView(title: "No results", subtitle: "Well, that’s embarrasing…")
+				} else {
+					List(response.results) { movie in
+						SearchResult(movie: movie)
+							.onTapGesture {
+								self.detailsMovie = movie
+								self.isShowingDetails = true
+						}
+					}.sheet(isPresented: self.$isShowingDetails) {
+						MovieDetailsModalView(movie: self.detailsMovie)
+							.environmentObject(self.genresStore)
+							.environmentObject(self.historyStore)
+							.environmentObject(self.watchlistStore)
+					}
+				}
+			}
 			Spacer(minLength: 0)
 		}
 	}

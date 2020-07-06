@@ -78,7 +78,7 @@ struct GenresBanner: View {
 			.padding(.all, Spacing.standard)
 			.shadow(radius: Radius.shadow)
 		}.sheet(isPresented: $isShowingOnboaring) {
-			OnboardingView()
+			SelectGenresView()
 				.environmentObject(self.genresStore)
 				.environmentObject(self.historyStore)
 				.onDisappear { self.isShowingOnboaring = false }

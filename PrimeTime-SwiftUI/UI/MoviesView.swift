@@ -19,9 +19,10 @@ struct MoviesView: View {
 	}
 	
 	@State var isShowingDetail = false
-	@State var selectedMovie: Movie? = nil
+	@State var selectedMovie: Movie!
+	
 	@State var isShowingDialog = false
-	@State var dialogMovie: Movie? = nil
+	@State var dialogMovie: Movie!
 	
 	private var title: String
 	private var filter: HomeFilter
@@ -31,45 +32,34 @@ struct MoviesView: View {
 		self.filter = filter
 	}
 	
-	var content: some View {
-		switch dataSource.result {
-		case .none, .loading:
-			return AnyView(LoadingView())
-		case .success(let movies):
-			return AnyView(
-				Grid(data: movies) { movie in
-					MovieCard(movie: movie)
-						.onTapGesture { self.open(movie) }
-						.onLongPressGesture { self.showRatingDialog(for: movie) }
-				}.sheet(isPresented: $isShowingDetail) {
-					MovieDetailsModalView(movie: self.selectedMovie!)
-						.environmentObject(self.historyStore)
-						.environmentObject(self.genresStore)
-						.environmentObject(self.watchlistStore)
-						.onDisappear {
-							self.isShowingDetail = false
-							self.selectedMovie = nil
-						}
-				}.actionSheet(isPresented: $isShowingDialog) {
-					ActionSheet(
-						title: Text("Rate \"\(dialogMovie!.title)\""),
-						buttons: [
-							.default(Text("Show more like this")),
-							.default(Text("Show less like this")),
-							.cancel()
-						]
-					)
-				}
-			)
-		case .error:
-			return AnyView(PlaceholderView(title: "Oh boy…", subtitle: "Someone is going to be fired over this."))
-		}
-	}
-	
 	var body: some View {
-		content.navigationBarTitle(title).onAppear {
+		LoadableView(from: dataSource.result) { movies in
+			Grid(data: movies) { movie in
+				MovieCard(movie: movie)
+					.onTapGesture { self.open(movie) }
+					.onLongPressGesture { self.showRatingDialog(for: movie) }
+			}.sheet(isPresented: self.$isShowingDetail) {
+				MovieDetailsModalView(movie: self.selectedMovie!)
+					.environmentObject(self.historyStore)
+					.environmentObject(self.genresStore)
+					.environmentObject(self.watchlistStore)
+					.onDisappear {
+						self.isShowingDetail = false
+						self.selectedMovie = nil
+					}
+			}.actionSheet(isPresented: self.$isShowingDialog) {
+				ActionSheet(
+					title: Text("Rate \"\(self.dialogMovie.title)\""),
+					buttons: [
+						.default(Text("Show more like this")),
+						.default(Text("Show less like this")),
+						.cancel()
+					]
+				)
+			}
+		}.onAppear {
 			self.fetchMovies()
-		}
+		}.navigationBarTitle(title)
 	}
 	
 	private func fetchMovies() {
@@ -160,34 +150,6 @@ struct MovieDetailsView: View {
 	
 	var movie: Movie
 	
-	private var similarMovies: some View {
-		switch similarMoviesDataSource.result {
-		case .none, .loading:
-			return AnyView(LoadingView())
-		case .success(let response):
-			return AnyView(
-				ScrollView(.horizontal, showsIndicators: false) {
-					HStack(spacing: Spacing.standard) {
-						ForEach(response.results, id: \.id) { movie in
-							URLImage(from: movie.posterURL, withPlaceholder: .poster)
-								.frame(width: 100, height: 150)
-								.cornerRadius(Radius.corner)
-						}
-					}
-					.padding(.horizontal, Spacing.large)
-				}
-			)
-		case .error:
-			return AnyView(
-				VStack {
-					Spacer()
-					Text("No similar movies found.")
-					Spacer()
-				}
-			)
-		}
-	}
-	
 	var body: some View {
 		VStack(alignment: .leading) {
 			ZStack {
@@ -260,7 +222,18 @@ struct MovieDetailsView: View {
 				.bold()
 				.padding(.horizontal, Spacing.large)
 			
-			similarMovies.frame(maxHeight: .some(150))
+			LoadableView(from: similarMoviesDataSource.result) { response in
+				ScrollView(.horizontal, showsIndicators: false) {
+					HStack(spacing: Spacing.standard) {
+						ForEach(response.results, id: \.id) { movie in
+							URLImage(from: movie.posterURL, withPlaceholder: .poster)
+								.frame(width: 100, height: 150)
+								.cornerRadius(Radius.corner)
+						}
+					}
+					.padding(.horizontal, Spacing.large)
+				}
+			}.frame(maxHeight: .some(150))
 		}.onAppear {
 			if let backdropURL = self.movie.backdropURL {
 				self.imageFetcher.fetch(backdropURL)

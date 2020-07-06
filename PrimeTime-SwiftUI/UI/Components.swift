@@ -309,6 +309,39 @@ struct LoadableImage: View {
 	}
 }
 
+struct LoadableView<Content: View, T: Codable>: View {
+	
+	private let apiResult: ApiResult<T>
+	private let errorTitle: String
+	private let errorSubtitle: String
+	private let content: (T) -> Content
+	
+	init(
+		from apiResult: ApiResult<T>,
+		errorTitle: String = "Oh no",
+		errorSubtitle: String = "Something went wrong",
+		@ViewBuilder content: @escaping (T) -> Content
+	) {
+		self.apiResult = apiResult
+		self.errorTitle = errorTitle
+		self.errorSubtitle = errorSubtitle
+		self.content = content
+	}
+	
+	var body: some View {
+		switch apiResult {
+		case .none:
+			return AnyView(EmptyView())
+		case .loading:
+			return AnyView(LoadingView())
+		case .success(let data):
+			return AnyView(content(data))
+		case .error:
+			return AnyView(PlaceholderView(title: errorTitle, subtitle: errorSubtitle))
+		}
+	}
+}
+
 struct URLImage: View {
 	@ObservedObject var imageFetcher: ImageFetcher
 	

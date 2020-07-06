@@ -16,33 +16,15 @@ struct ExploreView: View {
 	@ObservedObject var genresDataSource = DataSource<GenresResponse>(endpoint: .genres)
 	@State private var isSearchOpen: Bool = false
 	
-	private var content: some View {
-		switch genresDataSource.result {
-		case .none:
-			return AnyView(EmptyView())
-		case .loading:
-			return AnyView(LoadingView())
-		case .success(let response):
-			return AnyView(
-				CategoriesView(categories: [.nowPlaying, .upcoming] + response.genres.map(\.asCategory))
-			)
-		case .error:
-			return AnyView(PlaceholderView(title: "Something went wrong", subtitle: "Try again later."))
-		}
-	}
-	
 	var body: some View {
 		NavigationView {
-			VStack {
-				content
-				Spacer(minLength: 0)
-			}
-			.navigationBarTitle("Explore")
-			.navigationBarItems(
+			LoadableView(from: genresDataSource.result) { response in
+				CategoriesView(categories: [.nowPlaying, .upcoming] + response.genres.map(\.asCategory))
+			}.navigationBarItems(
 				trailing: Button(action: openSearch) {
 					Image(systemName: "magnifyingglass")
 				}
-			)
+			).navigationBarTitle("Explore")
 		}.sheet(isPresented: $isSearchOpen) {
 			SearchView()
 				.environmentObject(self.genresStore)
