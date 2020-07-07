@@ -8,63 +8,14 @@
 
 import SwiftUI
 
-struct MoviesView: View {
-	@EnvironmentObject private var genresStore: GenresStore
+struct MoviesViewContainer: View {
 	@EnvironmentObject private var historyStore: HistoryStore
-	@EnvironmentObject private var watchlistStore: WatchlistStore
 	
-	@ObservedObject var dataSource = CombiningDataSource { (responses: [MoviesResponse]) -> [Movie] in
-		let results = responses.flatMap { $0.results }
-		return Array(Set(results.sorted(by: \.popularity)))
-	}
-	
-	@State var isShowingDetail = false
-	@State var selectedMovie: Movie!
-	
-	@State var isShowingDialog = false
-	@State var dialogMovie: Movie!
-	
-	private var title: String
-	private var filter: HomeFilter
-	
-	init(title: String, filter: HomeFilter = .all) {
-		self.title = title
-		self.filter = filter
-	}
+	var filter: HomeFilter = .all
 	
 	var body: some View {
-		LoadableView(from: dataSource.result) { movies in
-			Grid(data: movies) { movie in
-				MovieCard(movie: movie)
-					.onTapGesture { self.open(movie) }
-					.onLongPressGesture { self.showRatingDialog(for: movie) }
-			}.sheet(isPresented: self.$isShowingDetail) {
-				MovieDetailsModalView(movie: self.selectedMovie!)
-					.environmentObject(self.historyStore)
-					.environmentObject(self.genresStore)
-					.environmentObject(self.watchlistStore)
-					.onDisappear {
-						self.isShowingDetail = false
-						self.selectedMovie = nil
-					}
-			}.actionSheet(isPresented: self.$isShowingDialog) {
-				ActionSheet(
-					title: Text("Rate \"\(self.dialogMovie.title)\""),
-					buttons: [
-						.default(Text("Show more like this")),
-						.default(Text("Show less like this")),
-						.cancel()
-					]
-				)
-			}
-		}.onAppear {
-			self.fetchMovies()
-		}.navigationBarTitle(title)
-	}
-	
-	private func fetchMovies() {
-		let endpoints = createEndpoints()
-		dataSource.query(endpoints)
+		MoviesView(dataSource: CombiningDataSource(createEndpoints()))
+			.navigationBarTitle(filter.title)
 	}
 	
 	private func createEndpoints() -> [Endpoint] {
@@ -85,15 +36,45 @@ struct MoviesView: View {
 			return [endpoint]
 		}
 	}
+}
+
+struct MoviesView: View {
+	typealias RecommendationsDataSource = CombiningDataSource<MoviesResponse>
+	
+	@EnvironmentObject private var genresStore: GenresStore
+	@EnvironmentObject private var historyStore: HistoryStore
+	@EnvironmentObject private var watchlistStore: WatchlistStore
+	
+	@ObservedObject var dataSource: RecommendationsDataSource
+	
+	@State var isShowingDetail = false
+	@State var selectedMovie: Movie!
+	
+	init(dataSource: RecommendationsDataSource) {
+		self.dataSource = dataSource
+	}
+	
+	var body: some View {
+		LoadableView(from: dataSource.result) { movies in
+			Grid(data: movies.sorted(by: \.popularity)) { movie in
+				MovieCard(movie: movie)
+					.onTapGesture { self.open(movie) }
+			}.sheet(isPresented: self.$isShowingDetail) {
+				MovieDetailsModalView(movie: self.selectedMovie!)
+					.environmentObject(self.historyStore)
+					.environmentObject(self.genresStore)
+					.environmentObject(self.watchlistStore)
+					.onDisappear {
+						self.isShowingDetail = false
+						self.selectedMovie = nil
+					}
+			}
+		}
+	}
 	
 	private func open(_ movie: Movie) {
 		isShowingDetail = true
 		selectedMovie = movie
-	}
-	
-	private func showRatingDialog(for movie: Movie) {
-		isShowingDialog = true
-		dialogMovie = movie
 	}
 }
 

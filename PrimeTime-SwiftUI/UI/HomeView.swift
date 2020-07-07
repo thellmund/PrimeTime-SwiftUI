@@ -12,22 +12,12 @@ enum HomeFilter {
 	case all
 	case category(MovieCategory)
 	
-	func createEndpoints(historyStore: HistoryStore) -> [Endpoint] {
+	var title: String {
 		switch self {
 		case .all:
-			let movies = historyStore.liked
-			return movies.map { Endpoint.recommendations(for: $0.id) }
+			return "Home"
 		case .category(let category):
-			var endpoint: Endpoint!
-			switch category {
-			case .nowPlaying:
-				endpoint = .nowPlaying()
-			case .upcoming:
-				endpoint = .upcoming()
-			case .genre(let genre):
-				endpoint = .genreSamples(for: genre.id)
-			}
-			return [endpoint]
+			return category.title
 		}
 	}
 }
@@ -36,52 +26,55 @@ struct HomeView: View {
 	
 	@EnvironmentObject var historyStore: HistoryStore
 	
-	@State var isShowingBanner: Bool = false
-	
 	var body: some View {
 		NavigationView {
 			ZStack(alignment: .bottom) {
-				MoviesView(title: "Home")
-				if isShowingBanner {
-					GenresBanner(onDismiss: { self.isShowingBanner = false })
-				}
-			}.onAppear {
-				self.isShowingBanner = self.historyStore.movies.isEmpty
+				MoviesViewContainer()
+				GenresBanner()
 			}
 		}
 	}
 }
 
 struct GenresBanner: View {
-	
 	@EnvironmentObject private var genresStore: GenresStore
 	@EnvironmentObject private var historyStore: HistoryStore
 	
-	@State var isShowingOnboaring: Bool = false
+	@State var isShowingOnboarding: Bool = false
+	@State var wasDismissed: Bool = false
 	
 	var onDismiss: () -> Void = {}
 	
 	var body: some View {
-		Button(action: { self.isShowingOnboaring = true }) {
-			HStack {
-				VStack(alignment: .leading) {
-					Text("Get personalized recommendations").bold().foregroundColor(.white)
-					Text("Add your favorite genres to get started").foregroundColor(.white)
+		if wasDismissed || historyStore.movies.isEmpty == false {
+			return AnyView(EmptyView())
+		} else {
+			return AnyView(
+				Button(action: { self.isShowingOnboarding = true }) {
+					HStack {
+						VStack(alignment: .leading) {
+							Text("Get personalized recommendations")
+								.bold()
+								.foregroundColor(.white)
+							Text("Add your favorite genres to get started")
+								.foregroundColor(.white)
+						}
+						Spacer(minLength: Spacing.standard)
+						Button(action: { self.wasDismissed = true }) {
+							Image(systemName: "xmark").foregroundColor(.white)
+						}
+					}
+					.padding(Spacing.large)
+					.background(Color.red.cornerRadius(Radius.corner))
+					.padding(.all, Spacing.standard)
+					.shadow(radius: Radius.shadow)
+				}.sheet(isPresented: $isShowingOnboarding) {
+					SelectGenresView()
+						.environmentObject(self.genresStore)
+						.environmentObject(self.historyStore)
+						.onDisappear { self.isShowingOnboarding = false }
 				}
-				Spacer(minLength: Spacing.standard)
-				Button(action: { self.onDismiss() }) {
-					Image(systemName: "xmark").foregroundColor(.white)
-				}
-			}
-			.padding(Spacing.large)
-			.background(Color.red.cornerRadius(Radius.corner))
-			.padding(.all, Spacing.standard)
-			.shadow(radius: Radius.shadow)
-		}.sheet(isPresented: $isShowingOnboaring) {
-			SelectGenresView()
-				.environmentObject(self.genresStore)
-				.environmentObject(self.historyStore)
-				.onDisappear { self.isShowingOnboaring = false }
+			)
 		}
 	}
 }

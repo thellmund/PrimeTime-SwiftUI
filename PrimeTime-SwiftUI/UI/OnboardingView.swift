@@ -21,7 +21,7 @@ struct SelectGenresView: View {
 	}
 	
 	private var nextDestination: some View {
-		SelectMoviesView()
+		SelectMoviesView(with: Array(selectedGenres))
 			.environmentObject(historyStore)
 			.navigationBarTitle("Select movies")
 	}
@@ -35,11 +35,7 @@ struct SelectGenresView: View {
 							genre: genre,
 							isSelected: self.selectedGenres.contains(genre)
 						).onTapGesture {
-							if self.selectedGenres.contains(genre) {
-								self.selectedGenres.remove(genre)
-							} else {
-								self.selectedGenres.insert(genre)
-							}
+							self.selectedGenres.toggle(genre)
 						}
 					}
 				}
@@ -55,6 +51,12 @@ struct SelectGenresView: View {
 			).navigationBarTitle("Select genres")
 		}
 		.accentColor(.red)
+	}
+}
+
+extension Genre {
+	var samplesEndpoint: Endpoint {
+		.genreSamples(for: id)
 	}
 }
 
@@ -76,17 +78,18 @@ struct GenresRow: View {
 
 struct SelectMoviesView: View {
 	@Environment(\.presentationMode) private var presentationMode
-	
 	@EnvironmentObject private var genresStore: GenresStore
 	@EnvironmentObject private var historyStore: HistoryStore
 	
-	@ObservedObject var samplesDataSource = CombiningDataSource { (responses: [SamplesResponse]) -> [Sample] in
-		Array(Set(responses.flatMap { $0.results })).shuffled()
+	@ObservedObject private var dataSource: CombiningDataSource<SamplesResponse>
+	@State private var selectedMovies = Set<Sample>()
+	
+	init(with genres: [Genre]) {
+		self.dataSource = CombiningDataSource(genres.map(\.samplesEndpoint))
 	}
-	@State var selectedMovies = Set<Sample>()
 	
 	var body: some View {
-		LoadableView(from: samplesDataSource.result) { response in
+		LoadableView(from: dataSource.result) { response in
 			Grid(data: response, columns: 3) { result in
 				SampleView(
 					sample: result,
@@ -100,14 +103,13 @@ struct SelectMoviesView: View {
 				}
 			}
 		}.onAppear {
-			let genreIDs = self.genresStore.favorites.map(\.id)
-			let endpoints = genreIDs.map { Endpoint.genreSamples(for: $0) }
-			self.samplesDataSource.query(endpoints)
-		}.navigationBarItems(trailing: Button(action: finishOnboarding) {
-			Text("Finish")
-				.bold()
-				.disabled(selectedMovies.count < 4)
-		})
+			self.dataSource.query()
+		}
+		.navigationBarItems(
+			trailing: Button(action: finishOnboarding) {
+				Text("Finish").bold().disabled(selectedMovies.count < 4)
+			}
+		)
 	}
 	
 	private func finishOnboarding() {
@@ -164,7 +166,12 @@ struct SelectGenresView_Previews: PreviewProvider {
 struct SampleView_Previews: PreviewProvider {
 	static var previews: some View {
 		SampleView(
-			sample: Sample(id: 1, title: "Title", posterPath: "https://image.tmdb.org/t/p/w1280/2TeJfUZMGolfDdW6DKhfIWqvq8y.jpg", backdropPath: "https://image.tmdb.org/t/p/w1280/2TeJfUZMGolfDdW6DKhfIWqvq8y.jpg"),
+			sample: Sample(
+				id: 1,
+				title: "Title",
+				posterPath: "https://image.tmdb.org/t/p/w1280/2TeJfUZMGolfDdW6DKhfIWqvq8y.jpg",
+				backdropPath: "https://image.tmdb.org/t/p/w1280/2TeJfUZMGolfDdW6DKhfIWqvq8y.jpg"
+			),
 			isSelected: false
 		)
 	}

@@ -17,13 +17,7 @@ enum ApiResult<T : Codable> {
 }
 
 class DataSource<T : Codable>: ObservableObject {
-	var objectWillChange = PassthroughSubject<ApiResult<T>, Never>()
-	
-	var result: ApiResult<T> = .none {
-		didSet {
-			objectWillChange.send(result)
-		}
-	}
+	@Published var result: ApiResult<T> = .none
 	
 	private var endpoint: Endpoint?
 	
@@ -34,15 +28,6 @@ class DataSource<T : Codable>: ObservableObject {
 		}
 	}
 	
-	func query() {
-		guard let endpoint = endpoint else {
-			print("You need to provide an Endpoint that should be queried.")
-			return
-		}
-		
-		query(endpoint)
-	}
-	
 	func query(_ endpoint: Endpoint) {
 		result = .loading
 		TMDBApiClient.shared.fetch(endpoint.url) { result in
@@ -51,21 +36,25 @@ class DataSource<T : Codable>: ObservableObject {
 	}
 }
 
-class CombiningDataSource<ResponseT : Codable, ResultT : Codable>: ObservableObject {
+protocol Unwrappable: Codable {
+	associatedtype Child: Codable
+	var unwrapped: [Child] { get }
+}
+
+class CombiningDataSource<ResponseT : Unwrappable>: ObservableObject {
+	@Published var result: ApiResult<[ResponseT.Child]> = .loading
 	
-	typealias Combiner = ([ResponseT]) -> [ResultT]
-	var combiner: Combiner
+	private var endpoints: [Endpoint]?
 	
-	var objectWillChange = PassthroughSubject<ApiResult<[ResultT]>, Never>()
-	
-	var result: ApiResult<[ResultT]> = .loading {
-		didSet {
-			objectWillChange.send(result)
-		}
+	init(_ endpoints: [Endpoint]? = nil) {
+		self.endpoints = endpoints
+		self.query()
 	}
 	
-	init(combiner: @escaping Combiner) {
-		self.combiner = combiner
+	func query() {
+		if let endpoints = endpoints {
+			self.query(endpoints)
+		}
 	}
 	
 	func query(_ endpoints: [Endpoint]) {
@@ -86,9 +75,16 @@ class CombiningDataSource<ResponseT : Codable, ResultT : Codable>: ObservableObj
 			if responses.isEmpty {
 				self.result = .error
 			} else {
-				let results = self.combiner(responses)
-				self.result = .success(response: results)
+				self.result = .success(response: responses.flatMap { $0.unwrapped })
 			}
 		}
 	}
+}
+
+extension MoviesResponse: Unwrappable {
+	var unwrapped: [Movie] { results }
+}
+
+extension SamplesResponse: Unwrappable {
+	var unwrapped: [Sample] { results }
 }

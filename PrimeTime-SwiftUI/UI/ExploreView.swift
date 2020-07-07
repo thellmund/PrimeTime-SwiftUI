@@ -41,11 +41,10 @@ struct ExploreView: View {
 
 struct CategoriesView: View {
 	var categories: [MovieCategory]
+	
 	var body: some View {
 		List(categories, id: \.id) { category in
-			NavigationLink(
-				destination: MoviesView(title: category.title, filter: .category(category))
-			) {
+			NavigationLink(destination: MoviesViewContainer(filter: .category(category))) {
 				CategoryRow(category: category)
 			}
 		}

@@ -51,6 +51,16 @@ extension Sequence {
 	}
 }
 
+extension Set {
+	mutating func toggle(_ element: Element) {
+		if contains(element) {
+			remove(element)
+		} else {
+			insert(element)
+		}
+	}
+}
+
 extension UIImage {
 	var averageColor: Color? {
 		guard let inputImage = CIImage(image: self) else { return nil }
