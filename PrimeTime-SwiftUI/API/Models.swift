@@ -154,15 +154,17 @@ enum MovieCategory: Identifiable {
 struct Sample: Codable, Identifiable, Hashable, GridElement {
 	var id: Int
 	var title: String
-	var posterPath: String
-	var backdropPath: String
+	var posterPath: String?
+	var backdropPath: String?
 	
 	var posterURL: URL? {
-		URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")
+		guard let posterPath = posterPath else { return nil }
+		return URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")
 	}
 	
 	var backdropURL: URL? {
-		URL(string: "https://image.tmdb.org/t/p/w1280\(backdropPath)")
+		guard let backdropPath = backdropPath else { return nil }
+		return URL(string: "https://image.tmdb.org/t/p/w1280\(backdropPath)")
 	}
 }
 

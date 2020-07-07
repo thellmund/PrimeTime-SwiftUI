@@ -44,7 +44,13 @@ class TMDBApiClient {
 		func decode(_ data: Data) -> T? {
 			let decoder = JSONDecoder()
 			decoder.keyDecodingStrategy = .convertFromSnakeCase
-			return try? decoder.decode(T.self, from: data)
+			
+			do {
+				return try decoder.decode(T.self, from: data)
+			} catch {
+				print(error)
+				return nil
+			}
 		}
 		
 		print("Fetching URL: \(url)")

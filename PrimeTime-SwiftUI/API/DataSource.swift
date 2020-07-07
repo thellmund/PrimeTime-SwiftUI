@@ -69,26 +69,25 @@ class CombiningDataSource<ResponseT : Codable, ResultT : Codable>: ObservableObj
 	}
 	
 	func query(_ endpoints: [Endpoint]) {
+		let dispatchGroup = DispatchGroup()
 		var responses: [ResponseT] = []
-		var outstandingQueries = endpoints
 		
 		for endpoint in endpoints {
+			dispatchGroup.enter()
 			TMDBApiClient.shared.fetch(endpoint.url) { (result: ApiResult<ResponseT>) in
-				outstandingQueries.removeAll { $0 == endpoint }
-				
-				switch result {
-				case .success(let response):
+				if case let .success(response) = result {
 					responses.append(response)
-				default:
-					break
 				}
-				
-				if outstandingQueries.isEmpty && responses.isEmpty {
-					self.result = .error
-				} else {
-					let results = self.combiner(responses)
-					self.result = .success(response: results)
-				}
+				dispatchGroup.leave()
+			}
+		}
+		
+		dispatchGroup.notify(queue: .main) {
+			if responses.isEmpty {
+				self.result = .error
+			} else {
+				let results = self.combiner(responses)
+				self.result = .success(response: results)
 			}
 		}
 	}
