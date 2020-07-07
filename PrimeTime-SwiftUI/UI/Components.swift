@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 enum WatchState {
 	case watched
@@ -363,6 +364,59 @@ struct URLImage: View {
 				}
 			)
 		}
+	}
+}
+
+struct TabbedView: View {
+	private var viewControllers: [UIHostingController<AnyView>]
+	
+	init(_ tabs: Tab...) {
+		viewControllers = tabs.map { tab in
+			let host = UIHostingController(rootView: tab.view)
+			host.tabBarItem = tab.barItem
+			return host
+		}
+	}
+	
+	var body: some View {
+		TabBarController(controllers: viewControllers).edgesIgnoringSafeArea(.all)
+	}
+	
+	struct Tab {
+		var view: AnyView
+		var barItem: UITabBarItem
+		
+		init<V: View>(view: V, barItem: UITabBarItem) {
+			self.view = AnyView(view)
+			self.barItem = barItem
+		}
+	}
+}
+
+extension View {
+	func tabItem(title: String, icon: String) -> TabbedView.Tab {
+		return TabbedView.Tab(
+			view: self,
+			barItem: UITabBarItem(
+				title: title,
+				image: UIImage(systemName: icon),
+				selectedImage: nil
+			)
+		)
+	}
+}
+
+struct TabBarController: UIViewControllerRepresentable {
+	var controllers: [UIViewController]
+	
+	func makeUIViewController(context: Context) -> UITabBarController {
+		let tabBarController = UITabBarController()
+		tabBarController.viewControllers = controllers
+		return tabBarController
+	}
+	
+	func updateUIViewController(_ uiViewController: UITabBarController, context: Context) {
+		// Free ad space
 	}
 }
 

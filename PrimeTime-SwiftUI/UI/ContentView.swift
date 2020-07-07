@@ -22,19 +22,10 @@ struct ContentView: View {
 	}
 	
 	var body: some View {
-		TabView {
-			HomeView().tabItem {
-				Image(systemName: "house.fill")
-				Text("Home")
-			}.tag(0)
-			ExploreView().tabItem {
-				Image(systemName: "magnifyingglass")
-				Text("Explore")
-			}.tag(1)
-			WatchlistView().tabItem {
-				Image(systemName: "list.number")
-				Text("Watchlist")
-			}.tag(2)
-		}.accentColor(.red)
+		TabbedView(
+			HomeView().tabItem(title: "Home", icon: "house.fill"),
+			ExploreView().tabItem(title: "Explore", icon: "magnifyingglass"),
+			WatchlistView().tabItem(title: "Watchlist", icon: "list.number")
+		).accentColor(.red)
 	}
 }
