@@ -9,13 +9,6 @@
 import SwiftUI
 import Combine
 
-enum ApiResult<T : Codable> {
-	case none
-	case loading
-	case success(response: T)
-	case error
-}
-
 class DataSource<T : Codable>: ObservableObject {
 	@Published var result: ApiResult<T> = .none
 	

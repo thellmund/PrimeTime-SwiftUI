@@ -14,17 +14,16 @@ struct HistoryView: View {
 	
 	@State private var editMode = EditMode.inactive
 	
+	@ViewBuilder
 	private var content: some View {
 		if store.movies.isEmpty {
-			return AnyView(PlaceholderView(title: "No movies", subtitle: "Your history is empty."))
+			PlaceholderView(title: "No movies", subtitle: "Your history is empty.")
 		} else {
-			return AnyView(
-				List {
-					ForEach(store.movies) { movie in
-						HistoryMovieCard(historyMovie: movie)
-					}.onDelete(perform: onDelete)
-				}
-			)
+			List {
+				ForEach(store.movies) { movie in
+					HistoryMovieCard(historyMovie: movie)
+				}.onDelete(perform: onDelete)
+			}
 		}
 	}
 	

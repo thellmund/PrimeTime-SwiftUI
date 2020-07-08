@@ -28,7 +28,7 @@ extension Array where Element: GridElement {
 
 extension UserDefaults {
 	func decodableArray<T : Decodable>(forKey key: String) -> [T]? {
-		guard let raw = UserDefaults.standard.stringArray(forKey: key) else { return nil }
+		guard let raw = stringArray(forKey: key) else { return nil }
 		let decoder = JSONDecoder()
 		let data = raw.map { $0.data(using: .utf8)! }
 		return data.map { try! decoder.decode(T.self, from: $0) }
@@ -37,7 +37,7 @@ extension UserDefaults {
 	func set<T : Encodable>(encodables: [T], forKey key: String) {
 		let encoder = JSONEncoder()
 		let encoded = encodables.map { String(decoding: try! encoder.encode($0), as: UTF8.self) }
-		UserDefaults.standard.set(encoded, forKey: key)
+		set(encoded, forKey: key)
 	}
 }
 

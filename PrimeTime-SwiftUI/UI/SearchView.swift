@@ -16,18 +16,20 @@ struct SearchView: View {
 	@EnvironmentObject private var watchlistStore: WatchlistStore
 	
 	@State private var text: String = ""
-	@State private var isShowingDetails: Bool = false
-	@State private var detailsMovie: Movie!
+	@State private var detailsMovie: Movie?
 	
 	@ObservedObject var dataSource = DataSource<MoviesResponse>()
 	
 	var body: some View {
 		VStack {
+			ModalHeader()
+			
 			SearchBarView(
 				text: $text,
 				onEnter: { self.dataSource.query(.search(self.text)) },
 				onCancel: { self.presentationMode.wrappedValue.dismiss() }
 			)
+			
 			LoadableView(from: dataSource.result) { response in
 				if response.results.isEmpty {
 					PlaceholderView(title: "No results", subtitle: "Well, that’s embarrasing…")
@@ -36,10 +38,9 @@ struct SearchView: View {
 						SearchResult(movie: movie)
 							.onTapGesture {
 								self.detailsMovie = movie
-								self.isShowingDetails = true
-						}
-					}.sheet(isPresented: self.$isShowingDetails) {
-						MovieDetailsModalView(movie: self.detailsMovie)
+							}
+					}.sheet(item: $detailsMovie) { movie in
+						MovieDetailsModalView(movie: movie)
 							.environmentObject(self.genresStore)
 							.environmentObject(self.historyStore)
 							.environmentObject(self.watchlistStore)
@@ -58,10 +59,14 @@ struct SearchResult: View {
 			URLImage(from: movie.posterURL, withPlaceholder: .poster)
 				.frame(width: 60, height: 90)
 				.cornerRadius(8)
+			
 			VStack(alignment: .leading) {
 				Text(movie.title).bold()
 				Text(movie.overview).lineLimit(3).truncationMode(.tail)
-			}.padding(.leading, Spacing.standard)
+			}
+			.padding(.leading, Spacing.standard)
+			.padding(.vertical, Spacing.standard)
+			
 			Spacer(minLength: 0)
 		}
 	}

@@ -43,10 +43,14 @@ struct CategoriesView: View {
 	var categories: [MovieCategory]
 	
 	var body: some View {
-		List(categories, id: \.id) { category in
-			NavigationLink(destination: MoviesViewContainer(filter: .category(category))) {
-				CategoryRow(category: category)
-			}
+		ScrollView {
+			LazyVStack {
+				ForEach(categories) {category in
+					NavigationLink(destination: MoviesViewContainer(filter: .category(category))) {
+						CategoryRow(category: category)
+					}.buttonStyle(PlainButtonStyle())
+				}
+			}.padding()
 		}
 	}
 }
@@ -62,17 +66,20 @@ struct CategoryRow: View {
 	}
 	
 	var body: some View {
-		HStack {
-			CategoryPostersStack(urls: dataSource.result.posterURLs)
-			Text(category.title)
-				.font(.title)
-				.bold()
-				.padding(.leading, Spacing.standard)
-			Spacer()
+		VStack {
+			HStack {
+				CategoryPostersStack(urls: dataSource.result.posterURLs)
+				Text(category.title)
+					.font(.title)
+					.bold()
+					.padding(.leading, Spacing.standard)
+				Spacer()
+				Image(systemName: "chevron.right")
+					.opacity(0.5)
+					.padding()
+			}
+			Divider()
 		}
-		.padding(.vertical, Spacing.standard)
-		.cornerRadius(Radius.corner)
-		.frame(maxWidth: .infinity)
 	}
 }
 

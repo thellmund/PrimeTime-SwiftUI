@@ -28,7 +28,7 @@ private class ImageCache {
 class ImageFetcher: ObservableObject {
 	var objectWillChange = PassthroughSubject<UIImage?, Never>()
 	
-	var image: UIImage? = nil {
+	var image: UIImage! {
 		didSet {
 			objectWillChange.send(image)
 		}
@@ -36,11 +36,15 @@ class ImageFetcher: ObservableObject {
 	
 	private var url: URL?
 	
-	init(url: URL? = nil) {
+	init(url: URL? = nil, placeholder: Assets.Placeholder) {
 		self.url = url
+		self.image = UIImage(named: placeholder.rawValue)
 		if let url = url {
 			fetch(url)
 		}
+//		else {
+//			image = UIImage(named: placeholder.rawValue)
+//		}
 	}
 	
 	func fetch() {

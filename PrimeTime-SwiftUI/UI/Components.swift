@@ -9,6 +9,13 @@
 import SwiftUI
 import UIKit
 
+enum ApiResult<T : Codable> {
+	case none
+	case loading
+	case success(response: T)
+	case error
+}
+
 enum WatchState {
 	case watched
 	case onWatchlist
@@ -60,133 +67,6 @@ enum WatchState {
 	
 	var shadowRadius: CGFloat {
 		(self != .watched) ? Radius.shadow : 0
-	}
-}
-
-struct WatchlistButton: View {
-	@EnvironmentObject var historyStore: HistoryStore
-	@EnvironmentObject var watchlistStore: WatchlistStore
-	
-	@State private var watchState: WatchState = .notOnWatchlist
-	
-	var movie: Movie
-	var backdropColor: Color?
-	
-	private var borderColor: Color {
-		var color: Color
-		
-		if let backdropColor = backdropColor, watchState != .notOnWatchlist {
-			color = backdropColor
-		} else {
-			color = .clear
-		}
-		
-		return color
-	}
-	
-	private var foregroundColor: Color {
-		var color: Color
-		
-		if let backdropColor = backdropColor, watchState != .notOnWatchlist {
-			color = backdropColor
-		} else {
-			color = .white
-		}
-		
-		return color
-	}
-	
-	private var backgroundColor: Color {
-		var color: Color
-		
-		if let backdropColor = backdropColor, watchState == .notOnWatchlist {
-			color = backdropColor
-		} else {
-			color = .clear
-		}
-		
-		return color
-	}
-	
-	var body: some View {
-		Button(action: toggle) {
-			HStack {
-				Spacer()
-				Image(systemName: watchState.icon)
-				Text(watchState.text)
-				Spacer()
-			}
-		}
-		.foregroundColor(foregroundColor)
-		.padding(.vertical, 14)
-		.background(backgroundColor.cornerRadius(Radius.corner))
-		.shadow(radius: watchState.shadowRadius)
-		.overlay(RoundedRectangle(cornerRadius: Radius.corner).stroke(borderColor, lineWidth: 2))
-		.padding(.horizontal, Spacing.large)
-		.disabled(watchState == .watched)
-		.onAppear {
-			if self.historyStore.contains(self.movie) {
-				self.watchState = .watched
-			}
-			if self.watchlistStore.contains(self.movie) {
-				self.watchState = .onWatchlist
-			}
-		}
-	}
-	
-	private func toggle() {
-		switch watchState {
-		case .notOnWatchlist:
-			watchlistStore.add(movie)
-			watchState = .onWatchlist
-		case .onWatchlist:
-			watchlistStore.remove(movie)
-			watchState = .notOnWatchlist
-		case .watched:
-			preconditionFailure()
-		}
-	}
-}
-
-struct WatchlistIconButton: View {
-	@EnvironmentObject var historyStore: HistoryStore
-	@EnvironmentObject var watchlistStore: WatchlistStore
-	
-	@State private var watchState: WatchState = .notOnWatchlist
-	
-	var movie: Movie
-	
-	var body: some View {
-		Button(action: toggle) {
-			HStack {
-				Image(systemName: watchState.smallIcon)
-				Text(watchState.shortText).bold().font(.caption)
-			}
-			.foregroundColor(.white)
-			.padding(.all, 6)
-			.overlay(RoundedRectangle(cornerRadius: 100).stroke(Color.white, lineWidth: 2))
-		}
-		.onAppear {
-			if self.historyStore.contains(self.movie) {
-				self.watchState = .watched
-			}
-			if self.watchlistStore.contains(self.movie) {
-				self.watchState = .onWatchlist
-			}
-		}
-	}
-	
-	private func toggle() {
-		switch watchState {
-		case .notOnWatchlist:
-			watchlistStore.add(movie)
-			watchState = .onWatchlist
-		case .onWatchlist:
-			watchlistStore.remove(movie)
-			watchState = .notOnWatchlist
-		case .watched:
-			preconditionFailure()
-		}
 	}
 }
 
@@ -329,41 +209,49 @@ struct LoadableView<Content: View, T: Codable>: View {
 		self.content = content
 	}
 	
+	@ViewBuilder
 	var body: some View {
 		switch apiResult {
 		case .none:
-			return AnyView(EmptyView())
+			EmptyView()
 		case .loading:
-			return AnyView(LoadingView())
+			LoadingView().frame(maxWidth: .infinity)
 		case .success(let data):
-			return AnyView(content(data))
+			content(data)
 		case .error:
-			return AnyView(PlaceholderView(title: errorTitle, subtitle: errorSubtitle))
+			PlaceholderView(title: errorTitle, subtitle: errorSubtitle)
 		}
+	}
+}
+
+struct ModalHeader: View {
+	@Environment(\.presentationMode) private var presentationMode
+	var body: some View {
+		Image(systemName: "chevron.compact.down")
+			.resizable()
+			.foregroundColor(.gray)
+			.frame(width: 32.0, height: 10.0)
+			.padding(.top, Spacing.large)
+			.padding(.bottom,Spacing.standard)
+			.onTapGesture { self.presentationMode.wrappedValue.dismiss() }
 	}
 }
 
 struct URLImage: View {
 	@ObservedObject var imageFetcher: ImageFetcher
 	
-	var placeholder: Assets.Placeholder
+	private var placeholder: Assets.Placeholder
+	private var showLoadingIndicator: Bool
 	
-	init(from url: URL?, withPlaceholder placeholder: Assets.Placeholder) {
-		self.imageFetcher = ImageFetcher(url: url)
+	init(from url: URL?, withPlaceholder placeholder: Assets.Placeholder, showLoading: Bool = true) {
+		self.imageFetcher = ImageFetcher(url: url, placeholder: placeholder)
 		self.placeholder = placeholder
+		self.showLoadingIndicator = showLoading
 	}
 	
+	@ViewBuilder
 	var body: some View {
-		if let image = imageFetcher.image {
-			return AnyView(Image(uiImage: image).resizable())
-		} else {
-			return AnyView(
-				ZStack(alignment: .center) {
-					Image(placeholder.rawValue).resizable()
-					ActivityIndicator(style: .medium)
-				}
-			)
-		}
+		Image(uiImage: imageFetcher.image).resizable()
 	}
 }
 
@@ -417,29 +305,5 @@ struct TabBarController: UIViewControllerRepresentable {
 	
 	func updateUIViewController(_ uiViewController: UITabBarController, context: Context) {
 		// Free ad space
-	}
-}
-
-// MARK: - Previews
-
-struct WatchlistIconButton_Previews: PreviewProvider {
-	static var previews: some View {
-		WatchlistIconButton(movie:
-			Movie(
-				id: 1,
-				title: "The Social Network",
-				posterPath: nil,
-				backdropPath: nil,
-				overview: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
-				releaseDate: "08/24/2020",
-				genreIds: [18],
-				runtime: 123,
-				popularity: 100.0,
-				voteAverage: 9.0,
-				voteCount: 1_234
-			)
-		)
-			.padding(10)
-			.background(Color.gray)
 	}
 }

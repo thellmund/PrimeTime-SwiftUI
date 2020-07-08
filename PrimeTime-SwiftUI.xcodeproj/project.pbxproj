@@ -14,6 +14,27 @@
 		9D0917B624A5640E0043A802 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D0917B524A5640E0043A802 /* Preview Assets.xcassets */; };
 		9D0917B924A5640E0043A802 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D0917B724A5640E0043A802 /* LaunchScreen.storyboard */; };
 		9D0917C324A56F660043A802 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0917C224A56F660043A802 /* Extensions.swift */; };
+		9D29FED024B4B56D00CD650A /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D29FECF24B4B56D00CD650A /* WidgetKit.framework */; };
+		9D29FED224B4B56D00CD650A /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D29FED124B4B56D00CD650A /* SwiftUI.framework */; };
+		9D29FED524B4B56D00CD650A /* PrimeTime_Widget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D29FED424B4B56D00CD650A /* PrimeTime_Widget.swift */; };
+		9D29FED724B4B56E00CD650A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D29FED624B4B56E00CD650A /* Assets.xcassets */; };
+		9D29FEDB24B4B56E00CD650A /* PrimeTime-WidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 9D29FECD24B4B56D00CD650A /* PrimeTime-WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9D29FEE124B4B5E000CD650A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0917C224A56F660043A802 /* Extensions.swift */; };
+		9D29FEE224B4B5F100CD650A /* GenresStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4363D24B0C70F000BF502 /* GenresStore.swift */; };
+		9D29FEE424B4B62A00CD650A /* Genres.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D29FEE324B4B62A00CD650A /* Genres.swift */; };
+		9D29FEE624B4B64E00CD650A /* Samples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D29FEE524B4B64E00CD650A /* Samples.swift */; };
+		9D29FEE824B4B67F00CD650A /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D29FEE724B4B67F00CD650A /* Models.swift */; };
+		9D29FEE924B4B6CD00CD650A /* WatchlistStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4363524B025A5000BF502 /* WatchlistStore.swift */; };
+		9D29FEEA24B4B77100CD650A /* Movies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4364624B13E79000BF502 /* Movies.swift */; };
+		9D29FEEB24B4B77A00CD650A /* Genres.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D29FEE324B4B62A00CD650A /* Genres.swift */; };
+		9D29FEEC24B4B78800CD650A /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D29FEE724B4B67F00CD650A /* Models.swift */; };
+		9D29FEF224B4CEA900CD650A /* MovieCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D29FEF124B4CEA900CD650A /* MovieCard.swift */; };
+		9D29FEF324B4CED000CD650A /* MovieCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D29FEF124B4CEA900CD650A /* MovieCard.swift */; };
+		9D29FEF524B4CF2600CD650A /* ImageFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D51EC8024B1815100A0A7CA /* ImageFetcher.swift */; };
+		9D29FEF624B4CF2F00CD650A /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE0FF0C24B17BD600A5ED9E /* Config.swift */; };
+		9D29FEF824B4CF4600CD650A /* WatchlistComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D29FEF724B4CF4600CD650A /* WatchlistComponents.swift */; };
+		9D29FEF924B4CFD300CD650A /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4364924B147AD000BF502 /* Components.swift */; };
+		9D29FEFA24B4D7F800CD650A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D0917B224A5640E0043A802 /* Assets.xcassets */; };
 		9D51EC7F24B1810000A0A7CA /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D51EC7E24B1810000A0A7CA /* SearchView.swift */; };
 		9D51EC8124B1815100A0A7CA /* ImageFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D51EC8024B1815100A0A7CA /* ImageFetcher.swift */; };
 		9D61E79B24B278B400617CD8 /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9D61E79A24B278B400617CD8 /* Keys.plist */; };
@@ -23,7 +44,7 @@
 		9DA4363A24B044A1000BF502 /* TMDBApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4363924B044A1000BF502 /* TMDBApiClient.swift */; };
 		9DA4363C24B04946000BF502 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4363B24B04946000BF502 /* DataSource.swift */; };
 		9DA4363E24B0C70F000BF502 /* GenresStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4363D24B0C70F000BF502 /* GenresStore.swift */; };
-		9DA4364724B13E79000BF502 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4364624B13E79000BF502 /* Models.swift */; };
+		9DA4364724B13E79000BF502 /* Movies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4364624B13E79000BF502 /* Movies.swift */; };
 		9DA4364A24B147AD000BF502 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4364924B147AD000BF502 /* Components.swift */; };
 		9DA4364C24B16599000BF502 /* GenresFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4364B24B16599000BF502 /* GenresFetcher.swift */; };
 		9DE0FF0024B1793A00A5ED9E /* ExploreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE0FEFF24B1793A00A5ED9E /* ExploreView.swift */; };
@@ -35,6 +56,30 @@
 		9DE0FF0D24B17BD600A5ED9E /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE0FF0C24B17BD600A5ED9E /* Config.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		9D29FED924B4B56E00CD650A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9D0917A124A5640C0043A802 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9D29FECC24B4B56D00CD650A;
+			remoteInfo = "PrimeTime-WidgetExtension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9D29FEDC24B4B56E00CD650A /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				9D29FEDB24B4B56E00CD650A /* PrimeTime-WidgetExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		9D0917A924A5640D0043A802 /* PrimeTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrimeTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D0917AC24A5640D0043A802 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -45,6 +90,19 @@
 		9D0917B824A5640E0043A802 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9D0917BA24A5640E0043A802 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9D0917C224A56F660043A802 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		9D29FECD24B4B56D00CD650A /* PrimeTime-WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "PrimeTime-WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D29FECF24B4B56D00CD650A /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		9D29FED124B4B56D00CD650A /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		9D29FED424B4B56D00CD650A /* PrimeTime_Widget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimeTime_Widget.swift; sourceTree = "<group>"; };
+		9D29FED624B4B56E00CD650A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9D29FED824B4B56E00CD650A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9D29FEE324B4B62A00CD650A /* Genres.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genres.swift; sourceTree = "<group>"; };
+		9D29FEE524B4B64E00CD650A /* Samples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Samples.swift; sourceTree = "<group>"; };
+		9D29FEE724B4B67F00CD650A /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		9D29FEED24B4C24600CD650A /* PrimeTime.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PrimeTime.entitlements; sourceTree = "<group>"; };
+		9D29FEEE24B4C29500CD650A /* PrimeTime-WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "PrimeTime-WidgetExtension.entitlements"; sourceTree = "<group>"; };
+		9D29FEF124B4CEA900CD650A /* MovieCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCard.swift; sourceTree = "<group>"; };
+		9D29FEF724B4CF4600CD650A /* WatchlistComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistComponents.swift; sourceTree = "<group>"; };
 		9D51EC7E24B1810000A0A7CA /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		9D51EC8024B1815100A0A7CA /* ImageFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFetcher.swift; sourceTree = "<group>"; };
 		9D61E79A24B278B400617CD8 /* Keys.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Keys.plist; sourceTree = "<group>"; };
@@ -54,7 +112,7 @@
 		9DA4363924B044A1000BF502 /* TMDBApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBApiClient.swift; sourceTree = "<group>"; };
 		9DA4363B24B04946000BF502 /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		9DA4363D24B0C70F000BF502 /* GenresStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresStore.swift; sourceTree = "<group>"; };
-		9DA4364624B13E79000BF502 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		9DA4364624B13E79000BF502 /* Movies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movies.swift; sourceTree = "<group>"; };
 		9DA4364924B147AD000BF502 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		9DA4364B24B16599000BF502 /* GenresFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresFetcher.swift; sourceTree = "<group>"; };
 		9DE0FEFF24B1793A00A5ED9E /* ExploreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreView.swift; sourceTree = "<group>"; };
@@ -74,13 +132,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9D29FECA24B4B56D00CD650A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D29FED224B4B56D00CD650A /* SwiftUI.framework in Frameworks */,
+				9D29FED024B4B56D00CD650A /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		9D0917A024A5640C0043A802 = {
 			isa = PBXGroup;
 			children = (
+				9D29FEEE24B4C29500CD650A /* PrimeTime-WidgetExtension.entitlements */,
 				9D0917AB24A5640D0043A802 /* PrimeTime-SwiftUI */,
+				9D29FED324B4B56D00CD650A /* PrimeTime-Widget */,
+				9D29FECE24B4B56D00CD650A /* Frameworks */,
 				9D0917AA24A5640D0043A802 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -89,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				9D0917A924A5640D0043A802 /* PrimeTime.app */,
+				9D29FECD24B4B56D00CD650A /* PrimeTime-WidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -96,6 +167,7 @@
 		9D0917AB24A5640D0043A802 /* PrimeTime-SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				9D29FEED24B4C24600CD650A /* PrimeTime.entitlements */,
 				9DA4364524B13E71000BF502 /* API */,
 				9DE0FF0E24B17E2B00A5ED9E /* Data */,
 				9DA4364824B147A0000BF502 /* UI */,
@@ -119,10 +191,31 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		9D29FECE24B4B56D00CD650A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9D29FECF24B4B56D00CD650A /* WidgetKit.framework */,
+				9D29FED124B4B56D00CD650A /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9D29FED324B4B56D00CD650A /* PrimeTime-Widget */ = {
+			isa = PBXGroup;
+			children = (
+				9D29FED424B4B56D00CD650A /* PrimeTime_Widget.swift */,
+				9D29FED624B4B56E00CD650A /* Assets.xcassets */,
+				9D29FED824B4B56E00CD650A /* Info.plist */,
+			);
+			path = "PrimeTime-Widget";
+			sourceTree = "<group>";
+		};
 		9DA4364524B13E71000BF502 /* API */ = {
 			isa = PBXGroup;
 			children = (
-				9DA4364624B13E79000BF502 /* Models.swift */,
+				9DA4364624B13E79000BF502 /* Movies.swift */,
+				9D29FEE324B4B62A00CD650A /* Genres.swift */,
+				9D29FEE524B4B64E00CD650A /* Samples.swift */,
 				9D61E79C24B27C4600617CD8 /* Endpoint.swift */,
 				9DA4364B24B16599000BF502 /* GenresFetcher.swift */,
 				9DA4363924B044A1000BF502 /* TMDBApiClient.swift */,
@@ -142,7 +235,10 @@
 				9DE0FF0524B17A5200A5ED9E /* OnboardingView.swift */,
 				9DE0FF0724B17AA500A5ED9E /* HomeView.swift */,
 				9DE0FF0924B17B0600A5ED9E /* MoviesView.swift */,
+				9D29FEF124B4CEA900CD650A /* MovieCard.swift */,
 				9D51EC7E24B1810000A0A7CA /* SearchView.swift */,
+				9D29FEE724B4B67F00CD650A /* Models.swift */,
+				9D29FEF724B4CF4600CD650A /* WatchlistComponents.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -177,15 +273,34 @@
 				9D0917A524A5640C0043A802 /* Sources */,
 				9D0917A624A5640C0043A802 /* Frameworks */,
 				9D0917A724A5640C0043A802 /* Resources */,
+				9D29FEDC24B4B56E00CD650A /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				9D29FEDA24B4B56E00CD650A /* PBXTargetDependency */,
 			);
 			name = "PrimeTime-SwiftUI";
 			productName = "PrimeTime-SwiftUI";
 			productReference = 9D0917A924A5640D0043A802 /* PrimeTime.app */;
 			productType = "com.apple.product-type.application";
+		};
+		9D29FECC24B4B56D00CD650A /* PrimeTime-WidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9D29FEDF24B4B56E00CD650A /* Build configuration list for PBXNativeTarget "PrimeTime-WidgetExtension" */;
+			buildPhases = (
+				9D29FEC924B4B56D00CD650A /* Sources */,
+				9D29FECA24B4B56D00CD650A /* Frameworks */,
+				9D29FECB24B4B56D00CD650A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "PrimeTime-WidgetExtension";
+			productName = "PrimeTime-WidgetExtension";
+			productReference = 9D29FECD24B4B56D00CD650A /* PrimeTime-WidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -193,12 +308,15 @@
 		9D0917A124A5640C0043A802 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1150;
+				LastSwiftUpdateCheck = 1200;
 				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = "Till Hellmund";
 				TargetAttributes = {
 					9D0917A824A5640C0043A802 = {
 						CreatedOnToolsVersion = 11.5;
+					};
+					9D29FECC24B4B56D00CD650A = {
+						CreatedOnToolsVersion = 12.0;
 					};
 				};
 			};
@@ -216,6 +334,7 @@
 			projectRoot = "";
 			targets = (
 				9D0917A824A5640C0043A802 /* PrimeTime-SwiftUI */,
+				9D29FECC24B4B56D00CD650A /* PrimeTime-WidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -232,6 +351,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9D29FECB24B4B56D00CD650A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D29FEFA24B4D7F800CD650A /* Assets.xcassets in Resources */,
+				9D29FED724B4B56E00CD650A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -240,13 +368,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				9DA4363624B025A5000BF502 /* WatchlistStore.swift in Sources */,
-				9DA4364724B13E79000BF502 /* Models.swift in Sources */,
+				9DA4364724B13E79000BF502 /* Movies.swift in Sources */,
 				9D0917C324A56F660043A802 /* Extensions.swift in Sources */,
 				9DA4364A24B147AD000BF502 /* Components.swift in Sources */,
 				9DE0FF0A24B17B0600A5ED9E /* MoviesView.swift in Sources */,
+				9D29FEE624B4B64E00CD650A /* Samples.swift in Sources */,
 				9DE0FF0024B1793A00A5ED9E /* ExploreView.swift in Sources */,
 				9DA4363C24B04946000BF502 /* DataSource.swift in Sources */,
 				9D0917AD24A5640D0043A802 /* AppDelegate.swift in Sources */,
+				9D29FEE424B4B62A00CD650A /* Genres.swift in Sources */,
 				9D61E79D24B27C4600617CD8 /* Endpoint.swift in Sources */,
 				9D51EC7F24B1810000A0A7CA /* SearchView.swift in Sources */,
 				9DA4363E24B0C70F000BF502 /* GenresStore.swift in Sources */,
@@ -255,16 +385,45 @@
 				9DE0FF0624B17A5200A5ED9E /* OnboardingView.swift in Sources */,
 				9D0917B124A5640D0043A802 /* ContentView.swift in Sources */,
 				9DE0FF0824B17AA500A5ED9E /* HomeView.swift in Sources */,
+				9D29FEF224B4CEA900CD650A /* MovieCard.swift in Sources */,
 				9DA4363A24B044A1000BF502 /* TMDBApiClient.swift in Sources */,
 				9DA4364C24B16599000BF502 /* GenresFetcher.swift in Sources */,
 				9DE0FF0D24B17BD600A5ED9E /* Config.swift in Sources */,
 				9DE0FF0224B179DE00A5ED9E /* HistoryView.swift in Sources */,
+				9D29FEF824B4CF4600CD650A /* WatchlistComponents.swift in Sources */,
 				9DE0FF0424B17A1700A5ED9E /* WatchlistView.swift in Sources */,
 				9DA4363824B03475000BF502 /* HistoryStore.swift in Sources */,
+				9D29FEE824B4B67F00CD650A /* Models.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9D29FEC924B4B56D00CD650A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D29FEEA24B4B77100CD650A /* Movies.swift in Sources */,
+				9D29FED524B4B56D00CD650A /* PrimeTime_Widget.swift in Sources */,
+				9D29FEF924B4CFD300CD650A /* Components.swift in Sources */,
+				9D29FEE224B4B5F100CD650A /* GenresStore.swift in Sources */,
+				9D29FEEB24B4B77A00CD650A /* Genres.swift in Sources */,
+				9D29FEF624B4CF2F00CD650A /* Config.swift in Sources */,
+				9D29FEF324B4CED000CD650A /* MovieCard.swift in Sources */,
+				9D29FEE124B4B5E000CD650A /* Extensions.swift in Sources */,
+				9D29FEE924B4B6CD00CD650A /* WatchlistStore.swift in Sources */,
+				9D29FEEC24B4B78800CD650A /* Models.swift in Sources */,
+				9D29FEF524B4CF2600CD650A /* ImageFetcher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9D29FEDA24B4B56E00CD650A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9D29FECC24B4B56D00CD650A /* PrimeTime-WidgetExtension */;
+			targetProxy = 9D29FED924B4B56E00CD650A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		9D0917B724A5640E0043A802 /* LaunchScreen.storyboard */ = {
@@ -395,12 +554,15 @@
 		9D0917BE24A5640E0043A802 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "PrimeTime-SwiftUI/PrimeTime.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"PrimeTime-SwiftUI/Preview Content\"";
 				DEVELOPMENT_TEAM = 2NP627XD3L;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "PrimeTime-SwiftUI/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -415,12 +577,15 @@
 		9D0917BF24A5640E0043A802 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "PrimeTime-SwiftUI/PrimeTime.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"PrimeTime-SwiftUI/Preview Content\"";
 				DEVELOPMENT_TEAM = 2NP627XD3L;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "PrimeTime-SwiftUI/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -429,6 +594,54 @@
 				PRODUCT_NAME = PrimeTime;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		9D29FEDD24B4B56E00CD650A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_ENTITLEMENTS = "PrimeTime-WidgetExtension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2NP627XD3L;
+				INFOPLIST_FILE = "PrimeTime-Widget/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.hellmund.PrimeTime-SwiftUI.PrimeTime-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9D29FEDE24B4B56E00CD650A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_ENTITLEMENTS = "PrimeTime-WidgetExtension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2NP627XD3L;
+				INFOPLIST_FILE = "PrimeTime-Widget/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.hellmund.PrimeTime-SwiftUI.PrimeTime-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -449,6 +662,15 @@
 			buildConfigurations = (
 				9D0917BE24A5640E0043A802 /* Debug */,
 				9D0917BF24A5640E0043A802 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9D29FEDF24B4B56E00CD650A /* Build configuration list for PBXNativeTarget "PrimeTime-WidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9D29FEDD24B4B56E00CD650A /* Debug */,
+				9D29FEDE24B4B56E00CD650A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

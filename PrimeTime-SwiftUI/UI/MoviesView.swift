@@ -46,9 +46,7 @@ struct MoviesView: View {
 	@EnvironmentObject private var watchlistStore: WatchlistStore
 	
 	@ObservedObject var dataSource: RecommendationsDataSource
-	
-	@State var isShowingDetail = false
-	@State var selectedMovie: Movie!
+	@State var movie: Movie?
 	
 	init(dataSource: RecommendationsDataSource) {
 		self.dataSource = dataSource
@@ -56,46 +54,24 @@ struct MoviesView: View {
 	
 	var body: some View {
 		LoadableView(from: dataSource.result) { movies in
-			Grid(data: movies.sorted(by: \.popularity)) { movie in
-				MovieCard(movie: movie)
-					.onTapGesture { self.open(movie) }
-			}.sheet(isPresented: self.$isShowingDetail) {
-				MovieDetailsModalView(movie: self.selectedMovie!)
+			ScrollView {
+				LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
+					ForEach(movies.sorted(by: \.popularity)) { movie in
+						MovieCard(movie: movie)
+							.onTapGesture { self.movie = movie }
+					}
+				}.padding()
+			}.sheet(item: $movie) { movie in
+				MovieDetailsModalView(movie: movie)
 					.environmentObject(self.historyStore)
 					.environmentObject(self.genresStore)
 					.environmentObject(self.watchlistStore)
-					.onDisappear {
-						self.isShowingDetail = false
-						self.selectedMovie = nil
-					}
 			}
 		}
-	}
-	
-	private func open(_ movie: Movie) {
-		isShowingDetail = true
-		selectedMovie = movie
-	}
-}
-
-struct MovieCard: View {
-	@State var backdropImage = UIImage()
-	var movie: Movie
-	
-	var body: some View {
-		ZStack(alignment: .bottom) {
-			URLImage(from: movie.posterURL, withPlaceholder: .poster)
-				.aspectRatio(contentMode: .fit)
-		}
-		.cornerRadius(Radius.corner)
-		.padding(.bottom, 4)
-		.shadow(color: Color.gray.opacity(0.4), radius: 4, x: 0, y: 0)
-		.border(Color.clear, width: 1)
 	}
 }
 
 struct MovieDetailsModalView: View {
-	@Environment(\.presentationMode) private var presentationMode
 	@EnvironmentObject var genresStore: GenresStore
 	@EnvironmentObject var historyStore: HistoryStore
 	
@@ -103,18 +79,8 @@ struct MovieDetailsModalView: View {
 	
 	var body: some View {
 		ScrollView {
-			VStack(alignment: .leading) {
-				HStack {
-					Spacer()
-					Image(systemName: "chevron.compact.down")
-						.resizable()
-						.foregroundColor(.gray)
-						.frame(width: 32.0, height: 10.0)
-						.padding(.top, Spacing.large)
-						.padding(.bottom,Spacing.standard)
-						.onTapGesture { self.presentationMode.wrappedValue.dismiss() }
-					Spacer()
-				}
+			VStack(alignment: .center) {
+				ModalHeader()
 				MovieDetailsView(movie: movie)
 			}
 		}
@@ -123,11 +89,15 @@ struct MovieDetailsModalView: View {
 
 struct MovieDetailsView: View {
 	@Environment(\.presentationMode) private var presentationMode
+	
 	@EnvironmentObject var genresStore: GenresStore
+	@EnvironmentObject var historyStore: HistoryStore
 	@EnvironmentObject var watchlistStore: WatchlistStore
 	
 	@ObservedObject var similarMoviesDataSource = DataSource<MoviesResponse>()
-	@ObservedObject var imageFetcher = ImageFetcher()
+	@ObservedObject var imageFetcher = ImageFetcher(placeholder: .backdrop)
+	
+	@State private var similarMovie: Movie?
 	
 	var movie: Movie
 	
@@ -210,6 +180,7 @@ struct MovieDetailsView: View {
 							URLImage(from: movie.posterURL, withPlaceholder: .poster)
 								.frame(width: 100, height: 150)
 								.cornerRadius(Radius.corner)
+								.onTapGesture { self.similarMovie = movie }
 						}
 					}
 					.padding(.horizontal, Spacing.large)
@@ -220,6 +191,11 @@ struct MovieDetailsView: View {
 				self.imageFetcher.fetch(backdropURL)
 			}
 			self.similarMoviesDataSource.query(.recommendations(for: self.movie.id))
+		}.sheet(item: $similarMovie) { movie in
+			MovieDetailsView(movie: movie)
+				.environmentObject(self.historyStore)
+				.environmentObject(self.genresStore)
+				.environmentObject(self.watchlistStore)
 		}
 	}
 	

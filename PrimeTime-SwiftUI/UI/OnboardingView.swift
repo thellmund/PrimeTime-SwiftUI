@@ -90,26 +90,25 @@ struct SelectMoviesView: View {
 	
 	var body: some View {
 		LoadableView(from: dataSource.result) { response in
-			Grid(data: response, columns: 3) { result in
-				SampleView(
-					sample: result,
-					isSelected: self.selectedMovies.contains(result)
-				).onTapGesture {
-					if self.selectedMovies.contains(result) {
-						self.selectedMovies.remove(result)
-					} else {
-						self.selectedMovies.insert(result)
+			ScrollView {
+				LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]) {
+					ForEach(response) { result in
+						SampleView(
+							sample: result,
+							isSelected: self.selectedMovies.contains(result)
+						).onTapGesture {
+							self.selectedMovies.toggle(result)
+						}
 					}
+				}.padding()
+			}.onAppear {
+				self.dataSource.query()
+			}.navigationBarItems(
+				trailing: Button(action: finishOnboarding) {
+					Text("Finish").bold().disabled(selectedMovies.count < 4)
 				}
-			}
-		}.onAppear {
-			self.dataSource.query()
+			)
 		}
-		.navigationBarItems(
-			trailing: Button(action: finishOnboarding) {
-				Text("Finish").bold().disabled(selectedMovies.count < 4)
-			}
-		)
 	}
 	
 	private func finishOnboarding() {
