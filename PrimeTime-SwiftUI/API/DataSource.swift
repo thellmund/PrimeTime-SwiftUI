@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 class DataSource<T : Codable>: ObservableObject {
-	@Published var result: ApiResult<T> = .none
+	@Published private(set) var result: ApiResult<T> = .none
 	
 	private var endpoint: Endpoint?
 	
@@ -29,13 +29,8 @@ class DataSource<T : Codable>: ObservableObject {
 	}
 }
 
-protocol Unwrappable: Codable {
-	associatedtype Child: Codable
-	var unwrapped: [Child] { get }
-}
-
 class CombiningDataSource<ResponseT : Unwrappable>: ObservableObject {
-	@Published var result: ApiResult<[ResponseT.Child]> = .loading
+	@Published private(set) var result: ApiResult<[ResponseT.Child]> = .loading
 	
 	private var endpoints: [Endpoint]?
 	
@@ -72,6 +67,11 @@ class CombiningDataSource<ResponseT : Unwrappable>: ObservableObject {
 			}
 		}
 	}
+}
+
+protocol Unwrappable: Codable {
+	associatedtype Child: Codable
+	var unwrapped: [Child] { get }
 }
 
 extension MoviesResponse: Unwrappable {

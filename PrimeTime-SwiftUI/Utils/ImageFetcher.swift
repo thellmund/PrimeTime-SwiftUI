@@ -15,9 +15,7 @@ private class ImageCache {
 	private var cache: [URL: Data] = [:]
 	
 	func get(for url: URL) -> Data? {
-		// TODO Thread safety
-		print("Getting image: \(url.absoluteString)")
-		return cache[url]
+		cache[url]
 	}
 	
 	func put(_ data: Data, for url: URL) {

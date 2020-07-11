@@ -16,9 +16,9 @@ enum Rating: String, Codable {
 
 struct HistoryMovie: Codable, Identifiable {
 	var id: Int
-	let title: String
-	let rating: Rating
-	let timestamp: Date = Date()
+	var title: String
+	var rating: Rating
+	var timestamp: Date = Date()
 	
 	var formattedTimestamp: String {
 		let formatter = DateFormatter()

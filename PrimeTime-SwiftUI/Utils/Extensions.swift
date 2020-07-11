@@ -9,7 +9,7 @@
 import SwiftUI
 import UIKit
 
-protocol GridElement: Identifiable {
+protocol GridElement: Identifiable, Hashable {
 	var id: Int { get }
 }
 
@@ -19,10 +19,8 @@ struct Row<T: GridElement> : Identifiable {
 }
 
 extension Array where Element: GridElement {
-	func chunked(into size: Int) -> [Row<Element>] {
-		return stride(from: 0, to: count, by: size).map {
-			Row(elements: Array(self[$0 ..< Swift.min($0 + size, count)]))
-		}
+	var unique: [Element] {
+		Array(Set(self))
 	}
 }
 

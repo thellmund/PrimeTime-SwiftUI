@@ -70,40 +70,6 @@ enum WatchState {
 	}
 }
 
-struct Grid<Content: View, Element: GridElement>: View {
-	var data: [Element]
-	var columns: Int = 2
-	var rowContent: (Element) -> Content
-	
-	var body: some View {
-		let rows = data.chunked(into: columns)
-		return List(rows) { row in
-			HStack(spacing: Spacing.standard) {
-				ForEach(row.elements) { movie in
-					self.rowContent(movie)
-				}
-			}
-		}
-	}
-}
-
-struct MoviesGrid<Content: View>: View {
-	var data: [Movie]
-	var columns: Int = 2
-	var rowContent: (Movie) -> Content
-	
-	var body: some View {
-		let rows = data.chunked(into: columns)
-		return List(rows) { row in
-			HStack(spacing: Spacing.standard) {
-				ForEach(row.elements) { movie in
-					self.rowContent(movie)
-				}
-			}
-		}
-	}
-}
-
 struct WatchlistCardButton: View {
 	var icon: String
 	var text: String

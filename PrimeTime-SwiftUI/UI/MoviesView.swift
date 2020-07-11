@@ -56,7 +56,7 @@ struct MoviesView: View {
 		LoadableView(from: dataSource.result) { movies in
 			ScrollView {
 				LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
-					ForEach(movies.sorted(by: \.popularity)) { movie in
+					ForEach(movies.unique.sorted(by: \.popularity)) { movie in
 						MovieCard(movie: movie)
 							.onTapGesture { self.movie = movie }
 					}

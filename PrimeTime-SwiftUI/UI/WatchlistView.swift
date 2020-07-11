@@ -23,18 +23,11 @@ struct WatchlistView: View {
 		if watchlistStore.movies.isEmpty {
 			PlaceholderView(title: "No movies", subtitle: "Your watchlist is empty.")
 		} else {
-			ScrollView {
-				LazyVStack {
-					ForEach(watchlistStore.movies) { movie in
-						WatchlistMovieRow(movie: movie)
-					}.onDelete(perform: removeMovie)
-				}.padding(Spacing.large)
-			}
-//			List {
-//				ForEach(watchlistStore.movies) { movie in
-//					WatchlistMovieRow(movie: movie)
-//				}.onDelete(perform: removeMovie)
-//			}
+			List {
+				ForEach(watchlistStore.movies) { movie in
+					WatchlistMovieRow(movie: movie)
+				}.onDelete(perform: removeMovie)
+			}.listStyle(PlainListStyle())
 		}
 	}
 	
@@ -87,45 +80,42 @@ struct WatchlistMovieRow: View {
 	var movie: Movie
 	
 	var body: some View {
-		VStack {
-			HStack {
-				URLImage(from: movie.posterURL, withPlaceholder: .poster)
-					.frame(width: 60, height: 90)
-					.aspectRatio(contentMode: .fit)
-					.cornerRadius(Radius.littleCorner)
-					.shadow(color: Color.gray.opacity(0.4), radius: 4, x: 0, y: 0)
-					.border(Color.clear, width: 1)
-					.padding(.vertical, Spacing.small)
-					.padding(.trailing, Spacing.standard)
-				
-				VStack(alignment: .leading) {
-					Text(movie.title).font(.headline)
-					Text(movie.formattedGenres(genresStore)).lineLimit(2)
-				}
-				
-				Spacer(minLength: Spacing.standard)
-				
-				Button(action: { self.isShowingDialog = true }) {
-					HStack {
-						Image(systemName: "checkmark")
-						Text("Watched").bold()
-					}.foregroundColor(.red)
-				}
-			}.actionSheet(isPresented: $isShowingDialog) {
-				ActionSheet(
-					title: Text("Rate \"\(movie.title)\""),
-					buttons: [
-						.default(Text("Show more like this")) {
-							self.markWatched(withRating: .like)
-						},
-						.default(Text("Show less like this")) {
-							self.markWatched(withRating: .dislike)
-						},
-						.cancel()
-					]
-				)
+		HStack {
+			URLImage(from: movie.posterURL, withPlaceholder: .poster)
+				.frame(width: 60, height: 90)
+				.aspectRatio(contentMode: .fit)
+				.cornerRadius(Radius.littleCorner)
+				.shadow(color: Color.gray.opacity(0.4), radius: 4, x: 0, y: 0)
+				.border(Color.clear, width: 1)
+				.padding(.vertical, Spacing.small)
+				.padding(.trailing, Spacing.standard)
+			
+			VStack(alignment: .leading) {
+				Text(movie.title).font(.headline)
+				Text(movie.formattedGenres(genresStore)).lineLimit(2)
 			}
-			Divider()
+			
+			Spacer(minLength: Spacing.standard)
+			
+			Button(action: { self.isShowingDialog = true }) {
+				HStack {
+					Image(systemName: "checkmark")
+					Text("Watched").bold()
+				}.foregroundColor(.red)
+			}
+		}.actionSheet(isPresented: $isShowingDialog) {
+			ActionSheet(
+				title: Text("Rate \"\(movie.title)\""),
+				buttons: [
+					.default(Text("Show more like this")) {
+						self.markWatched(withRating: .like)
+					},
+					.default(Text("Show less like this")) {
+						self.markWatched(withRating: .dislike)
+					},
+					.cancel()
+				]
+			)
 		}
 	}
 	
