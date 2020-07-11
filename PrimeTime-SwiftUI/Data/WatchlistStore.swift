@@ -9,9 +9,11 @@
 import Foundation
 import Combine
 
+private let STORAGE_KEY = "group.com.hellmund.PrimeTime-SwiftUI"
+
 class WatchlistStore: ObservableObject {
 	
-	@Published private(set) var movies: [Movie] {
+	@Published private(set) var movies: [MovieDetails] {
 		didSet {
 			UserDefaults(suiteName: STORAGE_KEY)?.set(movies.encoded, forKey: "watchlist")
 		}
@@ -21,15 +23,15 @@ class WatchlistStore: ObservableObject {
 		movies = UserDefaults(suiteName: STORAGE_KEY)?.decodableArray(forKey: "watchlist") ?? []
 	}
 	
-	func contains(_ movie: Movie) -> Bool {
+	func contains(_ movie: MovieDetails) -> Bool {
 		return movies.contains { $0.id == movie.id }
 	}
 	
-	func add(_ movie: Movie) {
+	func add(_ movie: MovieDetails) {
 		movies.append(movie)
 	}
 	
-	func remove(_ movie: Movie) {
+	func remove(_ movie: MovieDetails) {
 		movies.removeAll { $0.id == movie.id }
 	}
 	

@@ -12,48 +12,18 @@ struct WatchlistButton: View {
 	@EnvironmentObject var historyStore: HistoryStore
 	@EnvironmentObject var watchlistStore: WatchlistStore
 	
+	var movie: MovieDetails
+	@ObservedObject var imageFetcher: ImageFetcher
+	
 	@State private var watchState: WatchState = .notOnWatchlist
 	
-	var movie: Movie
-	var backdropColor: Color?
-	
-	private var borderColor: Color {
-		var color: Color
-		
-		if let backdropColor = backdropColor, watchState != .notOnWatchlist {
-			color = backdropColor
-		} else {
-			color = .clear
-		}
-		
-		return color
-	}
-	
-	private var foregroundColor: Color {
-		var color: Color
-		
-		if let backdropColor = backdropColor, watchState != .notOnWatchlist {
-			color = backdropColor
-		} else {
-			color = .white
-		}
-		
-		return color
-	}
-	
-	private var backgroundColor: Color {
-		var color: Color
-		
-		if let backdropColor = backdropColor, watchState == .notOnWatchlist {
-			color = backdropColor
-		} else {
-			color = .clear
-		}
-		
-		return color
-	}
-	
+	@ViewBuilder
 	var body: some View {
+		let color: Color = imageFetcher.image?.averageColor ?? .gray
+		let borderColor = (watchState != .notOnWatchlist) ? color : .clear
+		let foregroundColor = (watchState != .notOnWatchlist) ? color : .white
+		let backgroundColor = (watchState != .onWatchlist) ? color : .clear
+		
 		Button(action: toggle) {
 			HStack {
 				Spacer()
@@ -97,20 +67,21 @@ struct WatchlistButton: View {
 
 struct WatchlistButton_Previews: PreviewProvider {
 	static var previews: some View {
-		WatchlistButton(movie:
-			Movie(
+		WatchlistButton(
+			movie: MovieDetails(
 				id: 1,
 				title: "The Social Network",
 				posterPath: nil,
 				backdropPath: nil,
 				overview: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
 				releaseDate: "08/24/2020",
-				genreIds: [18],
+				genres: [],
 				runtime: 123,
 				popularity: 100.0,
 				voteAverage: 9.0,
 				voteCount: 1_234
-			)
+			),
+			imageFetcher: ImageFetcher(placeholder: .poster)
 		)
 			.padding(10)
 			.background(Color.gray)

@@ -75,7 +75,7 @@ struct WatchlistMovieRow: View {
 	
 	@State var isShowingDialog: Bool = false
 	
-	var movie: Movie
+	var movie: MovieDetails
 	
 	var body: some View {
 		HStack {
@@ -90,7 +90,7 @@ struct WatchlistMovieRow: View {
 			
 			VStack(alignment: .leading) {
 				Text(movie.title).font(.headline)
-				Text(movie.formattedGenres(genresStore)).lineLimit(2)
+				Text(movie.formattedGenres).lineLimit(2)
 			}
 			
 			Spacer(minLength: Spacing.standard)
@@ -134,14 +134,14 @@ struct WatchlistView_Previews: PreviewProvider {
 struct WatchlistMovieRow_Previews: PreviewProvider {
 	static var previews: some View {
 		WatchlistMovieRow(
-			movie: Movie(
+			movie: MovieDetails(
 				id: 1,
 				title: "The Social Network",
 				posterPath: nil,
 				backdropPath: nil,
 				overview: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
 				releaseDate: "08/24/2020",
-				genreIds: [18],
+				genres: [],
 				runtime: 123,
 				popularity: 100.0,
 				voteAverage: 9.0,

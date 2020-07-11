@@ -40,5 +40,3 @@ var TMDB_API_KEY: String? {
 		return values["TMDB_API_KEY"] as? String
 	}
 }
-
-var STORAGE_KEY = "group.com.hellmund.PrimeTime-SwiftUI"

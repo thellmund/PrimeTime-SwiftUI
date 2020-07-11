@@ -29,7 +29,7 @@ class DataSource<T : Codable>: ObservableObject {
 	}
 }
 
-class CombiningDataSource<ResponseT : Unwrappable>: ObservableObject {
+class CombiningDataSource<ResponseT : Flattenable>: ObservableObject {
 	@Published private(set) var result: ApiResult<[ResponseT.Child]> = .loading
 	
 	private var endpoints: [Endpoint]?
@@ -63,21 +63,21 @@ class CombiningDataSource<ResponseT : Unwrappable>: ObservableObject {
 			if responses.isEmpty {
 				self.result = .error
 			} else {
-				self.result = .success(response: responses.flatMap { $0.unwrapped })
+				self.result = .success(response: responses.flatMap { $0.flattened })
 			}
 		}
 	}
 }
 
-protocol Unwrappable: Codable {
+protocol Flattenable: Codable {
 	associatedtype Child: Codable
-	var unwrapped: [Child] { get }
+	var flattened: [Child] { get }
 }
 
-extension MoviesResponse: Unwrappable {
-	var unwrapped: [Movie] { results }
+extension MoviesResponse: Flattenable {
+	var flattened: [Movie] { results }
 }
 
-extension SamplesResponse: Unwrappable {
-	var unwrapped: [Sample] { results }
+extension SamplesResponse: Flattenable {
+	var flattened: [Sample] { results }
 }

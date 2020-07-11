@@ -25,6 +25,25 @@ struct Movie: GridElement, Codable, Hashable {
 	var voteAverage: Float
 	var voteCount: Int
 	
+	var posterURL: URL? {
+		guard let path = posterPath else { return nil }
+		return URL(string: "https://image.tmdb.org/t/p/w1280\(path)")
+	}
+}
+
+struct MovieDetails: GridElement, Codable, Hashable {
+	var id: Int
+	var title: String
+	var posterPath: String?
+	var backdropPath: String?
+	var overview: String
+	var releaseDate: String
+	var genres: [ApiGenre]
+	var runtime: Int?
+	var popularity: Float
+	var voteAverage: Float
+	var voteCount: Int
+	
 	var backdropURL: URL? {
 		guard let path = backdropPath else { return nil }
 		return URL(string: "https://image.tmdb.org/t/p/w500\(path)")
@@ -33,15 +52,6 @@ struct Movie: GridElement, Codable, Hashable {
 	var posterURL: URL? {
 		guard let path = posterPath else { return nil }
 		return URL(string: "https://image.tmdb.org/t/p/w1280\(path)")
-	}
-	
-	func genres(_ store: GenresStore) -> [ApiGenre] {
-		return genreIds.map {
-			ApiGenre(
-				id: $0,
-				name: store.get(by: $0)?.name ?? "Unknown genre"
-			)
-		}.sorted(by: \.name)
 	}
 	
 	var releaseYear: String {
@@ -63,8 +73,8 @@ struct Movie: GridElement, Codable, Hashable {
 		(voteCount < 1_000) ? String(voteCount) : "\(voteCount / 1_000)K votes"
 	}
 	
-	func formattedGenres(_ store: GenresStore) -> String {
-		genres(store).map(\.name).joined(separator: ", ")
+	var formattedGenres: String {
+		genres.map(\.name).sorted().joined(separator: ", ")
 	}
 }
 

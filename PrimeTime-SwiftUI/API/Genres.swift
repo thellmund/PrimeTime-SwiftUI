@@ -12,7 +12,7 @@ struct GenresResponse: Codable {
 	let genres: [ApiGenre]
 }
 
-struct ApiGenre: Codable {
+struct ApiGenre: Codable, Equatable, Hashable {
 	var id: Int
 	var name: String
 }

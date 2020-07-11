@@ -43,11 +43,11 @@ class HistoryStore: ObservableObject {
 		movies.filter { $0.rating == .like }
 	}
 	
-	func contains(_ movie: Movie) -> Bool {
+	func contains(_ movie: MovieDetails) -> Bool {
 		movies.contains { $0.id == movie.id }
 	}
 	
-	func add(_ movie: Movie, withRating rating: Rating) {
+	func add(_ movie: MovieDetails, withRating rating: Rating) {
 		movies.append(HistoryMovie(id: movie.id, title: movie.title, rating: rating))
 	}
 	

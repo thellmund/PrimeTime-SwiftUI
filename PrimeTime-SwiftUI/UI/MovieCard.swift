@@ -12,12 +12,12 @@ import UIKit
 struct MovieCard: View {
 	@State private var backdropImage = UIImage()
 	
-	var movie: Movie
+	var posterURL: URL?
 	var showLoading: Bool = true
 	
 	var body: some View {
 		ZStack(alignment: .bottom) {
-			URLImage(from: movie.posterURL, withPlaceholder: .poster, showLoading: showLoading)
+			URLImage(from: posterURL, withPlaceholder: .poster, showLoading: showLoading)
 				.aspectRatio(contentMode: .fit)
 		}
 		.cornerRadius(Radius.corner)

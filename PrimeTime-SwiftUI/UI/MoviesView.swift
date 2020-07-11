@@ -57,7 +57,7 @@ struct MoviesView: View {
 			ScrollView {
 				LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
 					ForEach(movies.unique.sorted(by: \.popularity)) { movie in
-						MovieCard(movie: movie)
+						MovieCard(posterURL: movie.posterURL)
 							.onTapGesture { detailsMovie = movie }
 					}
 				}.padding()
@@ -81,7 +81,7 @@ struct MovieDetailsModalView: View {
 		ScrollView {
 			VStack(alignment: .center) {
 				ModalHeader()
-				MovieDetailsView(movie: movie)
+				MovieDetailsView(detailsDataSource: DataSource(endpoint: .movieDetails(for: movie.id)))
 			}
 		}
 	}
@@ -91,54 +91,80 @@ struct MovieDetailsView: View {
 	@Environment(\.presentationMode) private var presentationMode
 	
 	@EnvironmentObject var genresStore: GenresStore
-	@EnvironmentObject var historyStore: HistoryStore
-	@EnvironmentObject var watchlistStore: WatchlistStore
 	
-	@ObservedObject var similarMoviesDataSource = DataSource<MoviesResponse>()
 	@ObservedObject var imageFetcher = ImageFetcher(placeholder: .backdrop)
-	
-	@State private var similarMovie: Movie?
-	
-	var movie: Movie
+	@ObservedObject var detailsDataSource: DataSource<MovieDetails>
 	
 	var body: some View {
-		VStack(alignment: .leading) {
-			ZStack {
-				LoadableImage(image: imageFetcher.image, placeholder: .backdrop)
-					.aspectRatio(contentMode: .fit)
-					.cornerRadius(Radius.corner)
-					.overlay(RoundedRectangle(cornerRadius: Radius.corner).stroke(lineWidth: 0))
-					.shadow(radius: Radius.shadow)
-					.padding(.horizontal)
+		LoadableView(from: detailsDataSource.result) { movie in
+			VStack(alignment: .leading) {
+				MovieDetailsHeader(imageFetcher: imageFetcher)
 				
-				Button(action: openTrailer) {
-					Image(systemName: "play.fill")
-						.resizable()
-						.padding(Spacing.large)
-						.foregroundColor(.white)
-						.frame(width: 64, height: 64)
-						.background(Color.black.opacity(0.5))
-						.cornerRadius(100)
+				HStack {
+					VStack(alignment: .leading, spacing: 4) {
+						Text(movie.title)
+							.font(.headline)
+						Text(movie.formattedGenres)
+							.font(.callout)
+							.opacity(0.7)
+							.padding(.bottom, 4)
+					}
+					Spacer()
 				}
+				.frame(maxWidth: .infinity)
+				.padding(.horizontal, Spacing.large)
+				.padding(.vertical, Spacing.standard)
+				
+				WatchlistButton(movie: movie, imageFetcher: imageFetcher)
+				
+				MovieInformation(movie: movie)
+				
+				Divider()
+				
+				SimilarMovies(dataSource: DataSource(endpoint: .recommendations(for: movie.id)))
+			}.onAppear {
+				guard let url = movie.backdropURL else { return }
+				imageFetcher.fetch(url)
 			}
+		}
+	}
+}
+
+struct MovieDetailsHeader: View {
+	@ObservedObject var imageFetcher: ImageFetcher
+	
+	var body: some View {
+		ZStack {
+			LoadableImage(image: imageFetcher.image, placeholder: .backdrop)
+				.aspectRatio(contentMode: .fit)
+				.cornerRadius(Radius.corner)
+				.overlay(RoundedRectangle(cornerRadius: Radius.corner).stroke(lineWidth: 0))
+				.shadow(radius: Radius.shadow)
+				.padding(.horizontal)
 			
-			HStack {
-				VStack(alignment: .leading, spacing: 4) {
-					Text(movie.title)
-						.font(.headline)
-					Text(movie.formattedGenres(genresStore))
-						.font(.callout)
-						.opacity(0.7)
-						.padding(.bottom, 4)
-				}
-				Spacer()
+			Button(action: openTrailer) {
+				Image(systemName: "play.fill")
+					.resizable()
+					.padding(Spacing.large)
+					.foregroundColor(.white)
+					.frame(width: 64, height: 64)
+					.background(Color.black.opacity(0.5))
+					.cornerRadius(100)
 			}
-			.frame(maxWidth: .infinity)
-			.padding(.horizontal, Spacing.large)
-			.padding(.vertical, Spacing.standard)
-			
-			WatchlistButton(movie: movie, backdropColor: imageFetcher.image?.averageColor)
-			
+		}
+	}
+	
+	private func openTrailer() {
+		if let url = URL(string: "https://www.youtube.com/watch?v=oHg5SJYRHA0") {
+			UIApplication.shared.open(url)
+		}
+	}
+}
+
+struct MovieInformation: View {
+	var movie: MovieDetails
+	var body: some View {
+		VStack(alignment: .leading) {
 			Text(movie.overview)
 				.font(.body)
 				.opacity(0.7)
@@ -165,15 +191,25 @@ struct MovieDetailsView: View {
 			}
 			.padding(.horizontal, Spacing.large)
 			.padding(.vertical, Spacing.standard)
-			
-			Divider()
-			
+		}
+	}
+}
+
+struct SimilarMovies: View {
+	@EnvironmentObject var genresStore: GenresStore
+	@EnvironmentObject var historyStore: HistoryStore
+	@EnvironmentObject var watchlistStore: WatchlistStore
+	
+	@ObservedObject var dataSource: DataSource<MoviesResponse>
+	@State private var similarMovie: Movie?
+	
+	var body: some View {
+		VStack(alignment: .leading) {
 			Text("Similar movies")
 				.font(.headline)
 				.bold()
-				.padding(.horizontal, Spacing.large)
 			
-			LoadableView(from: similarMoviesDataSource.result) { response in
+			LoadableView(from: dataSource.result) { response in
 				ScrollView(.horizontal, showsIndicators: false) {
 					HStack(spacing: Spacing.standard) {
 						ForEach(response.results, id: \.id) { movie in
@@ -183,67 +219,25 @@ struct MovieDetailsView: View {
 								.onTapGesture { similarMovie = movie }
 						}
 					}
-					.padding(.horizontal, Spacing.large)
 				}
-			}.frame(maxHeight: .some(150))
-		}.onAppear {
-			if let backdropURL = movie.backdropURL {
-				imageFetcher.fetch(backdropURL)
-			}
-			similarMoviesDataSource.query(.recommendations(for: movie.id))
+			}.frame(maxHeight: 150)
 		}.sheet(item: $similarMovie) { movie in
-			MovieDetailsView(movie: movie)
-				.environmentObject(historyStore)
-				.environmentObject(genresStore)
-				.environmentObject(watchlistStore)
-		}
-	}
-	
-	private func openTrailer() {
-		if let url = URL(string: "https://www.youtube.com/watch?v=oHg5SJYRHA0") {
-			UIApplication.shared.open(url)
-		}
+			MovieDetailsView(
+				detailsDataSource: DataSource(endpoint: .movieDetails(for: movie.id))
+			)
+			.environmentObject(historyStore)
+			.environmentObject(genresStore)
+			.environmentObject(watchlistStore)
+		}.padding(Spacing.large)
 	}
 }
 
 // MARK: - Previews
 
-struct MovieCard_Previews: PreviewProvider {
-	static var previews: some View {
-		MovieCard(
-			movie: Movie(
-				id: 1,
-				title: "The Social Network",
-				posterPath: nil,
-				backdropPath: nil,
-				overview: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-				releaseDate: "08/24/2020",
-				genreIds: [18],
-				runtime: 123,
-				popularity: 100.0,
-				voteAverage: 9.0,
-				voteCount: 1_234
-			)
-		)
-	}
-}
-
 struct MovieDetailsView_Previews: PreviewProvider {
 	static var previews: some View {
 		MovieDetailsView(
-			movie: Movie(
-				id: 1,
-				title: "The Social Network",
-				posterPath: nil,
-				backdropPath: nil,
-				overview: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
-				releaseDate: "08/24/2020",
-				genreIds: [18],
-				runtime: 123,
-				popularity: 100.0,
-				voteAverage: 9.0,
-				voteCount: 1_234
-			)
+			detailsDataSource: DataSource(endpoint: .movieDetails(for: 1))
 		)
 	}
 }

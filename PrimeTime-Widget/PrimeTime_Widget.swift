@@ -62,7 +62,7 @@ struct PrimeTime_WidgetEntryView : View {
 				Text("Watchlist").font(.subheadline).bold()
 				HStack {
 					ForEach(store.movies.prefix(3)) { movie in
-						MovieCard(movie: movie, showLoading: false)
+						MovieCard(posterURL: movie.posterURL, showLoading: false)
 					}
 					Spacer(minLength: 0)
 				}
