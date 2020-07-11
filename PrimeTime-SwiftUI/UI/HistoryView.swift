@@ -37,7 +37,7 @@ struct HistoryView: View {
 				.navigationBarTitle(Text("History"))
 				.navigationBarItems(
 					leading: leadingButton,
-					trailing: Button(action: close) {
+					trailing: Button(action: { presentationMode.wrappedValue.dismiss() }) {
 						Text("Close").bold()
 					}
 				)
@@ -49,10 +49,6 @@ struct HistoryView: View {
 		for index in Array(offsets) {
 			store.remove(at: index)
 		}
-	}
-	
-	private func close() {
-		presentationMode.wrappedValue.dismiss()
 	}
 }
 
@@ -71,18 +67,16 @@ struct HistoryMovieCard: View {
 			Spacer()
 			Image(systemName: historyMovie.rating.rawValue).padding()
 		}
-		.onTapGesture {
-			self.isShowingRatingDialog = true
-		}
+		.onTapGesture { isShowingRatingDialog = true }
 		.actionSheet(isPresented: $isShowingRatingDialog) {
 			ActionSheet(
 				title: Text("Rate \"\(historyMovie.title)\""),
 				buttons: [
 					.default(Text("Show more like this")) {
-						self.store.updateRating(.like, for: self.historyMovie)
+						store.updateRating(.like, for: historyMovie)
 					},
 					.default(Text("Show less like this")) {
-						self.store.updateRating(.dislike, for: self.historyMovie)
+						store.updateRating(.dislike, for: historyMovie)
 					},
 					.cancel()
 				]

@@ -33,11 +33,9 @@ class ApiCache {
 	}
 }
 
-class TMDBApiClient {
+enum TMDBApiClient {
 	
-	static let shared: TMDBApiClient = TMDBApiClient()
-	
-	func fetch<T : Decodable>(
+	static func fetch<T : Decodable>(
 		_ url: URL,
 		resultHandler: @escaping (ApiResult<T>) -> Void
 	) {

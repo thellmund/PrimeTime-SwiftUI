@@ -50,7 +50,7 @@ struct GenresBanner: View {
 			return AnyView(EmptyView())
 		} else {
 			return AnyView(
-				Button(action: { self.isShowingOnboarding = true }) {
+				Button(action: { isShowingOnboarding = true }) {
 					HStack {
 						VStack(alignment: .leading) {
 							Text("Get personalized recommendations")
@@ -60,7 +60,7 @@ struct GenresBanner: View {
 								.foregroundColor(.white)
 						}
 						Spacer(minLength: Spacing.standard)
-						Button(action: { self.wasDismissed = true }) {
+						Button(action: { wasDismissed = true }) {
 							Image(systemName: "xmark").foregroundColor(.white)
 						}
 					}
@@ -70,9 +70,8 @@ struct GenresBanner: View {
 					.shadow(radius: Radius.shadow)
 				}.sheet(isPresented: $isShowingOnboarding) {
 					SelectGenresView()
-						.environmentObject(self.genresStore)
-						.environmentObject(self.historyStore)
-						.onDisappear { self.isShowingOnboarding = false }
+						.environmentObject(genresStore)
+						.environmentObject(historyStore)
 				}
 			)
 		}

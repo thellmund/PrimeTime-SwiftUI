@@ -84,7 +84,7 @@ struct WatchlistCardButton: View {
 		.frame(maxWidth: .infinity)
 		.padding(Spacing.standard)
 		.background(Color.red.cornerRadius(Radius.corner))
-		.onTapGesture { self.onTapGesture() }
+		.onTapGesture { onTapGesture() }
 	}
 }
 
@@ -159,19 +159,13 @@ struct LoadableImage: View {
 struct LoadableView<Content: View, T: Codable>: View {
 	
 	private let apiResult: ApiResult<T>
-	private let errorTitle: String
-	private let errorSubtitle: String
 	private let content: (T) -> Content
 	
 	init(
 		from apiResult: ApiResult<T>,
-		errorTitle: String = "Oh no",
-		errorSubtitle: String = "Something went wrong",
 		@ViewBuilder content: @escaping (T) -> Content
 	) {
 		self.apiResult = apiResult
-		self.errorTitle = errorTitle
-		self.errorSubtitle = errorSubtitle
 		self.content = content
 	}
 	
@@ -185,7 +179,7 @@ struct LoadableView<Content: View, T: Codable>: View {
 		case .success(let data):
 			content(data)
 		case .error:
-			PlaceholderView(title: errorTitle, subtitle: errorSubtitle)
+			PlaceholderView(title: "Oh no", subtitle: "Something went wrong")
 		}
 	}
 }
@@ -199,7 +193,7 @@ struct ModalHeader: View {
 			.frame(width: 32.0, height: 10.0)
 			.padding(.top, Spacing.large)
 			.padding(.bottom,Spacing.standard)
-			.onTapGesture { self.presentationMode.wrappedValue.dismiss() }
+			.onTapGesture { presentationMode.wrappedValue.dismiss() }
 	}
 }
 

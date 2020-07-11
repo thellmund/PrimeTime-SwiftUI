@@ -11,13 +11,14 @@ import Combine
 
 class GenresStore: ObservableObject {
 	
-	var objectWillChange = PassthroughSubject<[Genre], Never>()
-	
-	var genres: [Genre] = UserDefaults.standard.decodableArray(forKey: "genres") ?? [] {
+	@Published private(set) var genres: [Genre] {
 		didSet {
-			UserDefaults.standard.set(encodables: genres, forKey: "genres")
-			objectWillChange.send(genres)
+			UserDefaults.standard.set(genres.encoded, forKey: "genres")
 		}
+	}
+	
+	init() {
+		genres = UserDefaults.standard.decodableArray(forKey: "genres") ?? []
 	}
 	
 	var favorites: [Genre] {

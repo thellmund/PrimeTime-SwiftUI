@@ -23,7 +23,7 @@ class DataSource<T : Codable>: ObservableObject {
 	
 	func query(_ endpoint: Endpoint) {
 		result = .loading
-		TMDBApiClient.shared.fetch(endpoint.url) { result in
+		TMDBApiClient.fetch(endpoint.url) { result in
 			self.result = result
 		}
 	}
@@ -51,7 +51,7 @@ class CombiningDataSource<ResponseT : Unwrappable>: ObservableObject {
 		
 		for endpoint in endpoints {
 			dispatchGroup.enter()
-			TMDBApiClient.shared.fetch(endpoint.url) { (result: ApiResult<ResponseT>) in
+			TMDBApiClient.fetch(endpoint.url) { (result: ApiResult<ResponseT>) in
 				if case let .success(response) = result {
 					responses.append(response)
 				}

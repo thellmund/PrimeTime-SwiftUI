@@ -52,9 +52,7 @@ struct WatchlistView: View {
 				)
 				.environment(\.editMode, $editMode)
 				.sheet(isPresented: $isShowingHistory) {
-					HistoryView().environmentObject(self.historyStore).onDisappear {
-						self.isShowingHistory = false
-					}
+					HistoryView().environmentObject(historyStore)
 				}
 		}
 	}
@@ -97,7 +95,7 @@ struct WatchlistMovieRow: View {
 			
 			Spacer(minLength: Spacing.standard)
 			
-			Button(action: { self.isShowingDialog = true }) {
+			Button(action: { isShowingDialog = true }) {
 				HStack {
 					Image(systemName: "checkmark")
 					Text("Watched").bold()
@@ -108,10 +106,10 @@ struct WatchlistMovieRow: View {
 				title: Text("Rate \"\(movie.title)\""),
 				buttons: [
 					.default(Text("Show more like this")) {
-						self.markWatched(withRating: .like)
+						markWatched(withRating: .like)
 					},
 					.default(Text("Show less like this")) {
-						self.markWatched(withRating: .dislike)
+						markWatched(withRating: .dislike)
 					},
 					.cancel()
 				]
@@ -120,8 +118,8 @@ struct WatchlistMovieRow: View {
 	}
 	
 	private func markWatched(withRating rating: Rating) {
-		self.watchlistStore.remove(movie)
-		self.historyStore.add(movie, withRating: rating)
+		watchlistStore.remove(movie)
+		historyStore.add(movie, withRating: rating)
 	}
 }
 

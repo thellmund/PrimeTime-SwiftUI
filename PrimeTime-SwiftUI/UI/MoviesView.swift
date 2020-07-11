@@ -46,7 +46,7 @@ struct MoviesView: View {
 	@EnvironmentObject private var watchlistStore: WatchlistStore
 	
 	@ObservedObject var dataSource: RecommendationsDataSource
-	@State var movie: Movie?
+	@State var detailsMovie: Movie?
 	
 	init(dataSource: RecommendationsDataSource) {
 		self.dataSource = dataSource
@@ -58,14 +58,14 @@ struct MoviesView: View {
 				LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
 					ForEach(movies.unique.sorted(by: \.popularity)) { movie in
 						MovieCard(movie: movie)
-							.onTapGesture { self.movie = movie }
+							.onTapGesture { detailsMovie = movie }
 					}
 				}.padding()
-			}.sheet(item: $movie) { movie in
+			}.sheet(item: $detailsMovie) { movie in
 				MovieDetailsModalView(movie: movie)
-					.environmentObject(self.historyStore)
-					.environmentObject(self.genresStore)
-					.environmentObject(self.watchlistStore)
+					.environmentObject(historyStore)
+					.environmentObject(genresStore)
+					.environmentObject(watchlistStore)
 			}
 		}
 	}
@@ -180,22 +180,22 @@ struct MovieDetailsView: View {
 							URLImage(from: movie.posterURL, withPlaceholder: .poster)
 								.frame(width: 100, height: 150)
 								.cornerRadius(Radius.corner)
-								.onTapGesture { self.similarMovie = movie }
+								.onTapGesture { similarMovie = movie }
 						}
 					}
 					.padding(.horizontal, Spacing.large)
 				}
 			}.frame(maxHeight: .some(150))
 		}.onAppear {
-			if let backdropURL = self.movie.backdropURL {
-				self.imageFetcher.fetch(backdropURL)
+			if let backdropURL = movie.backdropURL {
+				imageFetcher.fetch(backdropURL)
 			}
-			self.similarMoviesDataSource.query(.recommendations(for: self.movie.id))
+			similarMoviesDataSource.query(.recommendations(for: movie.id))
 		}.sheet(item: $similarMovie) { movie in
 			MovieDetailsView(movie: movie)
-				.environmentObject(self.historyStore)
-				.environmentObject(self.genresStore)
-				.environmentObject(self.watchlistStore)
+				.environmentObject(historyStore)
+				.environmentObject(genresStore)
+				.environmentObject(watchlistStore)
 		}
 	}
 	

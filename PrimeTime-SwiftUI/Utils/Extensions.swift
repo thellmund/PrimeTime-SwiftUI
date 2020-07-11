@@ -8,6 +8,7 @@
 
 import SwiftUI
 import UIKit
+import Combine
 
 protocol GridElement: Identifiable, Hashable {
 	var id: Int { get }
@@ -31,11 +32,12 @@ extension UserDefaults {
 		let data = raw.map { $0.data(using: .utf8)! }
 		return data.map { try! decoder.decode(T.self, from: $0) }
 	}
-	
-	func set<T : Encodable>(encodables: [T], forKey key: String) {
+}
+
+extension Array where Element: Encodable {
+	var encoded: [Encodable] {
 		let encoder = JSONEncoder()
-		let encoded = encodables.map { String(decoding: try! encoder.encode($0), as: UTF8.self) }
-		set(encoded, forKey: key)
+		return map { String(decoding: try! encoder.encode($0), as: UTF8.self) }
 	}
 }
 

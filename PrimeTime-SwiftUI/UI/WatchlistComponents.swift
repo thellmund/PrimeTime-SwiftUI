@@ -70,53 +70,11 @@ struct WatchlistButton: View {
 		.padding(.horizontal, Spacing.large)
 		.disabled(watchState == .watched)
 		.onAppear {
-			if self.historyStore.contains(self.movie) {
-				self.watchState = .watched
+			if historyStore.contains(movie) {
+				watchState = .watched
 			}
-			if self.watchlistStore.contains(self.movie) {
-				self.watchState = .onWatchlist
-			}
-		}
-	}
-	
-	private func toggle() {
-		switch watchState {
-		case .notOnWatchlist:
-			watchlistStore.add(movie)
-			watchState = .onWatchlist
-		case .onWatchlist:
-			watchlistStore.remove(movie)
-			watchState = .notOnWatchlist
-		case .watched:
-			preconditionFailure()
-		}
-	}
-}
-
-struct WatchlistIconButton: View {
-	@EnvironmentObject var historyStore: HistoryStore
-	@EnvironmentObject var watchlistStore: WatchlistStore
-	
-	@State private var watchState: WatchState = .notOnWatchlist
-	
-	var movie: Movie
-	
-	var body: some View {
-		Button(action: toggle) {
-			HStack {
-				Image(systemName: watchState.smallIcon)
-				Text(watchState.shortText).bold().font(.caption)
-			}
-			.foregroundColor(.white)
-			.padding(.all, 6)
-			.overlay(RoundedRectangle(cornerRadius: 100).stroke(Color.white, lineWidth: 2))
-		}
-		.onAppear {
-			if self.historyStore.contains(self.movie) {
-				self.watchState = .watched
-			}
-			if self.watchlistStore.contains(self.movie) {
-				self.watchState = .onWatchlist
+			if watchlistStore.contains(movie) {
+				watchState = .onWatchlist
 			}
 		}
 	}
@@ -137,9 +95,9 @@ struct WatchlistIconButton: View {
 
 // MARK: - Previews
 
-struct WatchlistIconButton_Previews: PreviewProvider {
+struct WatchlistButton_Previews: PreviewProvider {
 	static var previews: some View {
-		WatchlistIconButton(movie:
+		WatchlistButton(movie:
 			Movie(
 				id: 1,
 				title: "The Social Network",

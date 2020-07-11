@@ -26,8 +26,8 @@ struct SearchView: View {
 			
 			SearchBarView(
 				text: $text,
-				onEnter: { self.dataSource.query(.search(self.text)) },
-				onCancel: { self.presentationMode.wrappedValue.dismiss() }
+				onEnter: { dataSource.query(.search(text)) },
+				onCancel: { presentationMode.wrappedValue.dismiss() }
 			)
 			
 			LoadableView(from: dataSource.result) { response in
@@ -35,15 +35,12 @@ struct SearchView: View {
 					PlaceholderView(title: "No results", subtitle: "Well, that’s embarrasing…")
 				} else {
 					List(response.results) { movie in
-						SearchResult(movie: movie)
-							.onTapGesture {
-								self.detailsMovie = movie
-							}
+						SearchResult(movie: movie).onTapGesture { detailsMovie = movie }
 					}.sheet(item: $detailsMovie) { movie in
 						MovieDetailsModalView(movie: movie)
-							.environmentObject(self.genresStore)
-							.environmentObject(self.historyStore)
-							.environmentObject(self.watchlistStore)
+							.environmentObject(genresStore)
+							.environmentObject(historyStore)
+							.environmentObject(watchlistStore)
 					}
 				}
 			}

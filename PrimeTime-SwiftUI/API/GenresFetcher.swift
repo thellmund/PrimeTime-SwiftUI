@@ -10,7 +10,7 @@ import Foundation
 
 class GenresFetcher {
 	static func fetch(onSuccess: @escaping ([ApiGenre]) -> Void) {
-		TMDBApiClient.shared.fetch(Endpoint.genres.url) { (result: ApiResult<GenresResponse>) in
+		TMDBApiClient.fetch(Endpoint.genres.url) { (result: ApiResult<GenresResponse>) in
 			guard case let .success(response) = result else { return }
 			onSuccess(response.genres)
 		}

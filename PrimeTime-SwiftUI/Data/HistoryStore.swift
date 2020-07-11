@@ -29,13 +29,14 @@ struct HistoryMovie: Codable, Identifiable {
 
 class HistoryStore: ObservableObject {
 	
-	var objectWillChange = PassthroughSubject<[HistoryMovie], Never>()
-	
-	var movies: [HistoryMovie] = UserDefaults.standard.decodableArray(forKey: "history_movies") ?? [] {
+	@Published private(set) var movies: [HistoryMovie] {
 		didSet {
-			UserDefaults.standard.set(encodables: movies, forKey: "history_movies")
-			objectWillChange.send(movies)
+			UserDefaults.standard.set(movies.encoded, forKey: "history_movies")
 		}
+	}
+	
+	init() {
+		movies = UserDefaults.standard.decodableArray(forKey: "history_movies") ?? []
 	}
 	
 	var liked: [HistoryMovie] {

@@ -21,16 +21,15 @@ struct ExploreView: View {
 			LoadableView(from: genresDataSource.result) { response in
 				CategoriesView(categories: [.nowPlaying, .upcoming] + response.genres.map(\.asCategory))
 			}.navigationBarItems(
-				trailing: Button(action: openSearch) {
+				trailing: Button(action: { isSearchOpen = true }) {
 					Image(systemName: "magnifyingglass")
 				}
 			).navigationBarTitle("Explore")
 		}.sheet(isPresented: $isSearchOpen) {
 			SearchView()
-				.environmentObject(self.genresStore)
-				.environmentObject(self.historyStore)
-				.environmentObject(self.watchlistStore)
-				.onDisappear { self.isSearchOpen = false }
+				.environmentObject(genresStore)
+				.environmentObject(historyStore)
+				.environmentObject(watchlistStore)
 		}
 	}
 	

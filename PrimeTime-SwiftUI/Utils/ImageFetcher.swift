@@ -24,15 +24,8 @@ private class ImageCache {
 }
 
 class ImageFetcher: ObservableObject {
-	var objectWillChange = PassthroughSubject<UIImage?, Never>()
-	
-	var image: UIImage! {
-		didSet {
-			objectWillChange.send(image)
-		}
-	}
-	
 	private var url: URL?
+	@Published private(set) var image: UIImage!
 	
 	init(url: URL? = nil, placeholder: Assets.Placeholder) {
 		self.url = url
@@ -40,9 +33,6 @@ class ImageFetcher: ObservableObject {
 		if let url = url {
 			fetch(url)
 		}
-//		else {
-//			image = UIImage(named: placeholder.rawValue)
-//		}
 	}
 	
 	func fetch() {
@@ -55,34 +45,6 @@ class ImageFetcher: ObservableObject {
 	}
 	
 	func fetch(_ url: URL) {
-		// This is an ugly hack. Fix this sometime.
-		if let existing = ImageCache.shared.get(for: url) {
-			self.image = UIImage(data: existing)
-			return
-		}
-		
-		URLSession.shared.dataTask(with: url) { (data, _, _) in
-			guard let data = data else { return }
-			ImageCache.shared.put(data, for: url)
-			DispatchQueue.main.async { [weak self] in
-				self?.image = UIImage(data: data)
-			}
-		}.resume()
-	}
-}
-
-class DelayedImageFetcher: ObservableObject {
-	var objectWillChange = PassthroughSubject<UIImage?, Never>()
-	
-	var image: UIImage? = nil {
-		didSet {
-			objectWillChange.send(image)
-		}
-	}
-	
-	func fetch(url: URL?) {
-		guard let url = url else { return }
-		
 		// This is an ugly hack. Fix this sometime.
 		if let existing = ImageCache.shared.get(for: url) {
 			self.image = UIImage(data: existing)

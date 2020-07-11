@@ -33,20 +33,20 @@ struct SelectGenresView: View {
 					List(response.genres.asGenres) { genre in
 						GenresRow(
 							genre: genre,
-							isSelected: self.selectedGenres.contains(genre)
+							isSelected: selectedGenres.contains(genre)
 						).onTapGesture {
-							self.selectedGenres.toggle(genre)
+							selectedGenres.toggle(genre)
 						}
 					}
 				}
 			}.navigationBarItems(
-				leading: Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
+				leading: Button(action: { presentationMode.wrappedValue.dismiss() }) {
 					Text("Cancel")
 				},
 				trailing: NavigationLink(destination: nextDestination) {
 					Text("Next").bold()
 				}.simultaneousGesture(TapGesture().onEnded {
-					self.genresStore.storeFavorites(Array(self.selectedGenres))
+					genresStore.storeFavorites(Array(selectedGenres))
 				}).disabled(showNextButton == false)
 			).navigationBarTitle("Select genres")
 		}
@@ -95,14 +95,14 @@ struct SelectMoviesView: View {
 					ForEach(response) { result in
 						SampleView(
 							sample: result,
-							isSelected: self.selectedMovies.contains(result)
+							isSelected: selectedMovies.contains(result)
 						).onTapGesture {
-							self.selectedMovies.toggle(result)
+							selectedMovies.toggle(result)
 						}
 					}
 				}.padding()
 			}.onAppear {
-				self.dataSource.query()
+				dataSource.query()
 			}.navigationBarItems(
 				trailing: Button(action: finishOnboarding) {
 					Text("Finish").bold().disabled(selectedMovies.count < 4)

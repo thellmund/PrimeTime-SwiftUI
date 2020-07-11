@@ -21,7 +21,6 @@ struct MovieCard: View {
 				.aspectRatio(contentMode: .fit)
 		}
 		.cornerRadius(Radius.corner)
-		// .padding(.bottom, 4)
 		.shadow(color: Color.gray.opacity(0.4), radius: 4, x: 0, y: 0)
 		.border(Color.clear, width: 1)
 	}
