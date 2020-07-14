@@ -23,13 +23,29 @@ private class ImageCache {
 	}
 }
 
+private extension UIImage {
+	convenience init?(color: UIColor, size: CGSize) {
+		let rect = CGRect(origin: .zero, size: size)
+		UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
+		color.setFill()
+		UIRectFill(rect)
+		
+		let image = UIGraphicsGetImageFromCurrentImageContext()
+		UIGraphicsEndImageContext()
+		
+		guard let cgImage = image?.cgImage else { return nil }
+		self.init(cgImage: cgImage)
+	}
+}
+
 class ImageFetcher: ObservableObject {
 	private var url: URL?
 	@Published private(set) var image: UIImage!
 	
 	init(url: URL? = nil, placeholder: Assets.Placeholder) {
 		self.url = url
-		self.image = UIImage(named: placeholder.rawValue)
+		self.image = UIImage(color: .secondarySystemBackground, size: placeholder.aspectRatio)
+		
 		if let url = url {
 			fetch(url)
 		}

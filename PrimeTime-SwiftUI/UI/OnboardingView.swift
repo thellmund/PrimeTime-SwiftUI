@@ -92,7 +92,7 @@ struct SelectMoviesView: View {
 		LoadableView(from: dataSource.result) { response in
 			ScrollView {
 				LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]) {
-					ForEach(response) { result in
+					ForEach(response.unique.sorted(by: \.popularity)) { result in
 						SampleView(
 							sample: result,
 							isSelected: selectedMovies.contains(result)
@@ -137,23 +137,6 @@ struct SampleView: View {
 	}
 }
 
-struct SampleRow: View {
-	var sample: Sample
-	var isSelected: Bool
-	
-	var body: some View {
-		HStack {
-			Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-				.foregroundColor(.red)
-			URLImage(from: sample.posterURL, withPlaceholder: .poster)
-				.frame(width: 32, height: 48)
-				.cornerRadius(4)
-			Text(sample.title)
-			Spacer()
-		}.opacity(isSelected ? 1.0 : 0.4)
-	}
-}
-
 // MARK: - Previews
 
 struct SelectGenresView_Previews: PreviewProvider {
@@ -168,8 +151,9 @@ struct SampleView_Previews: PreviewProvider {
 			sample: Sample(
 				id: 1,
 				title: "Title",
-				posterPath: "https://image.tmdb.org/t/p/w1280/2TeJfUZMGolfDdW6DKhfIWqvq8y.jpg",
-				backdropPath: "https://image.tmdb.org/t/p/w1280/2TeJfUZMGolfDdW6DKhfIWqvq8y.jpg"
+				posterPath: "https://image.tmdb.org/t/p/w342/2TeJfUZMGolfDdW6DKhfIWqvq8y.jpg",
+				backdropPath: "https://image.tmdb.org/t/p/w342/2TeJfUZMGolfDdW6DKhfIWqvq8y.jpg",
+				popularity: 1.234
 			),
 			isSelected: false
 		)

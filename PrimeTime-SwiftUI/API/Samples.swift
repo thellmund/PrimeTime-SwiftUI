@@ -17,14 +17,10 @@ struct Sample: Codable, Identifiable, Hashable, GridElement {
 	var title: String
 	var posterPath: String?
 	var backdropPath: String?
+	var popularity: Float
 	
 	var posterURL: URL? {
 		guard let posterPath = posterPath else { return nil }
-		return URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")
-	}
-	
-	var backdropURL: URL? {
-		guard let backdropPath = backdropPath else { return nil }
-		return URL(string: "https://image.tmdb.org/t/p/w1280\(backdropPath)")
+		return URL(string: "https://image.tmdb.org/t/p/w342\(posterPath)")
 	}
 }

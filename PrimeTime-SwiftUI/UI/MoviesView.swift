@@ -89,7 +89,6 @@ struct MovieDetailsModalView: View {
 
 struct MovieDetailsView: View {
 	@Environment(\.presentationMode) private var presentationMode
-	
 	@EnvironmentObject var genresStore: GenresStore
 	
 	@ObservedObject var imageFetcher = ImageFetcher(placeholder: .backdrop)
@@ -98,29 +97,11 @@ struct MovieDetailsView: View {
 	var body: some View {
 		LoadableView(from: detailsDataSource.result) { movie in
 			VStack(alignment: .leading) {
-				MovieDetailsHeader(imageFetcher: imageFetcher)
-				
-				HStack {
-					VStack(alignment: .leading, spacing: 4) {
-						Text(movie.title)
-							.font(.headline)
-						Text(movie.formattedGenres)
-							.font(.callout)
-							.opacity(0.7)
-							.padding(.bottom, 4)
-					}
-					Spacer()
-				}
-				.frame(maxWidth: .infinity)
-				.padding(.horizontal, Spacing.large)
-				.padding(.vertical, Spacing.standard)
-				
+				MovieDetailsHeader(url: movie.backdropURL)
+				MovieDetailsTitle(movie: movie)
 				WatchlistButton(movie: movie, imageFetcher: imageFetcher)
-				
 				MovieInformation(movie: movie)
-				
 				Divider()
-				
 				SimilarMovies(dataSource: DataSource(endpoint: .recommendations(for: movie.id)))
 			}.onAppear {
 				guard let url = movie.backdropURL else { return }
@@ -130,12 +111,39 @@ struct MovieDetailsView: View {
 	}
 }
 
-struct MovieDetailsHeader: View {
-	@ObservedObject var imageFetcher: ImageFetcher
+struct MovieDetailsTitle: View {
+	var movie: MovieDetails
 	
+	@ViewBuilder
+	var body: some View {
+		let subtitle = [
+			movie.formattedGenres,
+			movie.formattedReleaseDate,
+			movie.formattedRuntime
+		].joined(separator: " ∙ ")
+		
+		HStack {
+			VStack(alignment: .leading, spacing: 4) {
+				Text(movie.title)
+					.font(.headline)
+				Text(subtitle) // Text(movie.formattedGenres)
+					.font(.callout)
+					.opacity(0.7)
+					.padding(.bottom, 4)
+			}
+			Spacer()
+		}
+		.frame(maxWidth: .infinity)
+		.padding(.horizontal, Spacing.large)
+		.padding(.vertical, Spacing.standard)
+	}
+}
+
+struct MovieDetailsHeader: View {
+	var url: URL?
 	var body: some View {
 		ZStack {
-			LoadableImage(image: imageFetcher.image, placeholder: .backdrop)
+			URLImage(from: url, withPlaceholder: .backdrop)
 				.aspectRatio(contentMode: .fit)
 				.cornerRadius(Radius.corner)
 				.overlay(RoundedRectangle(cornerRadius: Radius.corner).stroke(lineWidth: 0))
@@ -170,27 +178,6 @@ struct MovieInformation: View {
 				.opacity(0.7)
 				.padding(.horizontal, Spacing.large)
 				.padding(.vertical, Spacing.standard)
-			
-			Divider()
-			
-			HStack(alignment: .center) {
-				VStack(alignment: .center) {
-					Text(movie.releaseYear).font(.body)
-					Text("Release").font(.callout).opacity(0.7)
-				}.frame(maxWidth: .infinity)
-				
-				VStack(alignment: .center) {
-					Text(movie.formattedRuntime).font(.body)
-					Text("Duration").font(.callout).opacity(0.7)
-				}.frame(maxWidth: .infinity)
-				
-				VStack(alignment: .center) {
-					Text(movie.formattedVoteAverage).font(.body)
-					Text(movie.formattedVoteCount).font(.callout).opacity(0.7)
-				}.frame(maxWidth: .infinity)
-			}
-			.padding(.horizontal, Spacing.large)
-			.padding(.vertical, Spacing.standard)
 		}
 	}
 }
@@ -208,6 +195,8 @@ struct SimilarMovies: View {
 			Text("Similar movies")
 				.font(.headline)
 				.bold()
+				.padding(.horizontal, Spacing.large)
+				.padding(.top)
 			
 			LoadableView(from: dataSource.result) { response in
 				ScrollView(.horizontal, showsIndicators: false) {
@@ -218,7 +207,7 @@ struct SimilarMovies: View {
 								.cornerRadius(Radius.corner)
 								.onTapGesture { similarMovie = movie }
 						}
-					}
+					}.padding(Spacing.large)
 				}
 			}.frame(maxHeight: 150)
 		}.sheet(item: $similarMovie) { movie in
@@ -228,7 +217,7 @@ struct SimilarMovies: View {
 			.environmentObject(historyStore)
 			.environmentObject(genresStore)
 			.environmentObject(watchlistStore)
-		}.padding(Spacing.large)
+		}
 	}
 }
 

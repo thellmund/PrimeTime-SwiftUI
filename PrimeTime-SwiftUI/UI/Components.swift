@@ -138,26 +138,7 @@ struct ActivityIndicator: UIViewRepresentable {
 	}
 }
 
-struct LoadableImage: View {
-	var image: UIImage?
-	var placeholder: Assets.Placeholder
-	
-	var body: some View {
-		if let image = image {
-			return AnyView(Image(uiImage: image).resizable())
-		} else {
-			return AnyView(
-				ZStack(alignment: .center) {
-					Image(placeholder.rawValue).resizable()
-					ActivityIndicator(style: .medium)
-				}
-			)
-		}
-	}
-}
-
 struct LoadableView<Content: View, T: Codable>: View {
-	
 	private let apiResult: ApiResult<T>
 	private let content: (T) -> Content
 	
@@ -199,13 +180,10 @@ struct ModalHeader: View {
 
 struct URLImage: View {
 	@ObservedObject var imageFetcher: ImageFetcher
-	
-	private var placeholder: Assets.Placeholder
 	private var showLoadingIndicator: Bool
 	
 	init(from url: URL?, withPlaceholder placeholder: Assets.Placeholder, showLoading: Bool = true) {
 		self.imageFetcher = ImageFetcher(url: url, placeholder: placeholder)
-		self.placeholder = placeholder
 		self.showLoadingIndicator = showLoading
 	}
 	

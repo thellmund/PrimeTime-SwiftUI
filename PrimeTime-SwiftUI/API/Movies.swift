@@ -27,7 +27,7 @@ struct Movie: GridElement, Codable, Hashable {
 	
 	var posterURL: URL? {
 		guard let path = posterPath else { return nil }
-		return URL(string: "https://image.tmdb.org/t/p/w1280\(path)")
+		return URL(string: "https://image.tmdb.org/t/p/w500\(path)")
 	}
 }
 
@@ -46,16 +46,24 @@ struct MovieDetails: GridElement, Codable, Hashable {
 	
 	var backdropURL: URL? {
 		guard let path = backdropPath else { return nil }
-		return URL(string: "https://image.tmdb.org/t/p/w500\(path)")
+		return URL(string: "https://image.tmdb.org/t/p/w780\(path)")
 	}
 	
 	var posterURL: URL? {
 		guard let path = posterPath else { return nil }
-		return URL(string: "https://image.tmdb.org/t/p/w1280\(path)")
+		return URL(string: "https://image.tmdb.org/t/p/w500\(path)")
 	}
 	
-	var releaseYear: String {
-		String(releaseDate.split(separator: "-").first!)
+	var formattedReleaseDate: String {
+		let formatter = DateFormatter()
+		formatter.dateFormat = "yyyy-MM-dd"
+		
+		guard let date = formatter.date(from: releaseDate) else {
+			return "–"
+		}
+		
+		formatter.dateFormat = "MMM dd, yyyy"
+		return formatter.string(from: date)
 	}
 	
 	var formattedRuntime: String {

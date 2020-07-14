@@ -9,9 +9,17 @@
 import SwiftUI
 
 enum Assets {
-	enum Placeholder: String {
-		case poster = "MoviePosterPlaceholder"
-		case backdrop = "MovieBackdropPlaceholder"
+	enum Placeholder {
+		case poster, backdrop
+		
+		var aspectRatio: CGSize {
+			switch self {
+			case .backdrop:
+				return CGSize(width: 640, height: 360)
+			case .poster:
+				return CGSize(width: 2, height: 3)
+			}
+		}
 	}
 }
 
