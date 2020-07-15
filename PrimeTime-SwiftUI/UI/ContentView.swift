@@ -9,18 +9,6 @@
 import SwiftUI
 
 struct ContentView: View {
-	
-	@EnvironmentObject private var historyStore: HistoryStore
-	
-	init() {
-		if #available(iOS 14.0, *) {
-			// iOS 14 doesn't have extra separators below the list by default.
-		} else {
-			// To remove only extra separators below the list:
-			UITableView.appearance().tableFooterView = UIView()
-		}
-	}
-	
 	var body: some View {
 		TabbedView(
 			HomeView().tabItem(title: "Home", icon: "house.fill"),

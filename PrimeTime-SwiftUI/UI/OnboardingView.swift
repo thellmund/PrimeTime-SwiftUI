@@ -91,7 +91,8 @@ struct SelectMoviesView: View {
 	var body: some View {
 		LoadableView(from: dataSource.result) { response in
 			ScrollView {
-				LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]) {
+				let columns = Array(repeatElement(GridItem(.flexible()), count: 3))
+				LazyVGrid(columns: columns) {
 					ForEach(response.unique.sorted(by: \.popularity)) { result in
 						SampleView(
 							sample: result,

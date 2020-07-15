@@ -21,8 +21,7 @@ struct MoviesViewContainer: View {
 	private func createEndpoints() -> [Endpoint] {
 		switch filter {
 		case .all:
-			let movies = historyStore.liked
-			return [.topRated()] + movies.map { Endpoint.recommendations(for: $0.id) }
+			return [.topRated()] + historyStore.liked.map { .recommendations(for: $0.id) }
 		case .category(let category):
 			var endpoint: Endpoint!
 			switch category {
@@ -41,7 +40,6 @@ struct MoviesViewContainer: View {
 struct MoviesView: View {
 	typealias RecommendationsDataSource = CombiningDataSource<MoviesResponse>
 	
-	@EnvironmentObject private var genresStore: GenresStore
 	@EnvironmentObject private var historyStore: HistoryStore
 	@EnvironmentObject private var watchlistStore: WatchlistStore
 	
@@ -55,7 +53,8 @@ struct MoviesView: View {
 	var body: some View {
 		LoadableView(from: dataSource.result) { movies in
 			ScrollView {
-				LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
+				let columns = Array(repeatElement(GridItem(.flexible()), count: 2))
+				LazyVGrid(columns: columns) {
 					ForEach(movies.unique.sorted(by: \.popularity)) { movie in
 						MovieCard(posterURL: movie.posterURL)
 							.onTapGesture { detailsMovie = movie }
@@ -64,7 +63,6 @@ struct MoviesView: View {
 			}.sheet(item: $detailsMovie) { movie in
 				MovieDetailsModalView(movie: movie)
 					.environmentObject(historyStore)
-					.environmentObject(genresStore)
 					.environmentObject(watchlistStore)
 			}
 		}
@@ -72,9 +70,6 @@ struct MoviesView: View {
 }
 
 struct MovieDetailsModalView: View {
-	@EnvironmentObject var genresStore: GenresStore
-	@EnvironmentObject var historyStore: HistoryStore
-	
 	var movie: Movie
 	
 	var body: some View {
@@ -89,24 +84,58 @@ struct MovieDetailsModalView: View {
 
 struct MovieDetailsView: View {
 	@Environment(\.presentationMode) private var presentationMode
-	@EnvironmentObject var genresStore: GenresStore
+	@EnvironmentObject private var historyStore: HistoryStore
+	@EnvironmentObject private var watchlistStore: WatchlistStore
 	
-	@ObservedObject var imageFetcher = ImageFetcher(placeholder: .backdrop)
+	@ObservedObject private var imageFetcher = ImageFetcher(placeholder: .backdrop)
 	@ObservedObject var detailsDataSource: DataSource<MovieDetails>
+	
+	@State private var watchState: WatchState = .notOnWatchlist
 	
 	var body: some View {
 		LoadableView(from: detailsDataSource.result) { movie in
 			VStack(alignment: .leading) {
 				MovieDetailsHeader(url: movie.backdropURL)
 				MovieDetailsTitle(movie: movie)
-				WatchlistButton(movie: movie, imageFetcher: imageFetcher)
+				
+				WatchlistButton(
+					watchState: watchState,
+					imageFetcher: imageFetcher,
+					action: { toggleWatchState(for: movie) }
+				)
+				
 				MovieInformation(movie: movie)
 				Divider()
 				SimilarMovies(dataSource: DataSource(endpoint: .recommendations(for: movie.id)))
 			}.onAppear {
-				guard let url = movie.backdropURL else { return }
-				imageFetcher.fetch(url)
+				fetchBackdrop(for: movie)
+				calculateWatchState(for: movie)
 			}
+		}
+	}
+	
+	private func fetchBackdrop(for movie: MovieDetails) {
+		guard let url = movie.backdropURL else { return }
+		imageFetcher.fetch(url)
+	}
+	
+	private func calculateWatchState(for movie: MovieDetails) {
+		if historyStore.contains(movie) {
+			watchState = .watched
+		} else if watchlistStore.contains(movie) {
+			watchState = .onWatchlist
+		} else {
+			watchState = .notOnWatchlist
+		}
+	}
+	
+	private func toggleWatchState(for movie: MovieDetails) {
+		if watchlistStore.contains(movie) {
+			watchlistStore.remove(movie)
+			watchState = .notOnWatchlist
+		} else {
+			watchlistStore.add(movie)
+			watchState = .onWatchlist
 		}
 	}
 }
@@ -126,7 +155,7 @@ struct MovieDetailsTitle: View {
 			VStack(alignment: .leading, spacing: 4) {
 				Text(movie.title)
 					.font(.headline)
-				Text(subtitle) // Text(movie.formattedGenres)
+				Text(subtitle)
 					.font(.callout)
 					.opacity(0.7)
 					.padding(.bottom, 4)
@@ -183,9 +212,8 @@ struct MovieInformation: View {
 }
 
 struct SimilarMovies: View {
-	@EnvironmentObject var genresStore: GenresStore
-	@EnvironmentObject var historyStore: HistoryStore
-	@EnvironmentObject var watchlistStore: WatchlistStore
+	@EnvironmentObject private var historyStore: HistoryStore
+	@EnvironmentObject private var watchlistStore: WatchlistStore
 	
 	@ObservedObject var dataSource: DataSource<MoviesResponse>
 	@State private var similarMovie: Movie?
@@ -211,12 +239,9 @@ struct SimilarMovies: View {
 				}
 			}.frame(maxHeight: 150)
 		}.sheet(item: $similarMovie) { movie in
-			MovieDetailsView(
-				detailsDataSource: DataSource(endpoint: .movieDetails(for: movie.id))
-			)
-			.environmentObject(historyStore)
-			.environmentObject(genresStore)
-			.environmentObject(watchlistStore)
+			MovieDetailsModalView(movie: movie)
+				.environmentObject(historyStore)
+				.environmentObject(watchlistStore)
 		}
 	}
 }

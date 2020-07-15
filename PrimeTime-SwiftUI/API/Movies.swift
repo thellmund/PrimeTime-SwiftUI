@@ -18,7 +18,7 @@ struct Movie: GridElement, Codable, Hashable {
 	var posterPath: String?
 	var backdropPath: String?
 	var overview: String
-	var releaseDate: String
+	var releaseDate: String?
 	var genreIds: [Int]
 	var runtime: Int?
 	var popularity: Float
@@ -37,7 +37,7 @@ struct MovieDetails: GridElement, Codable, Hashable {
 	var posterPath: String?
 	var backdropPath: String?
 	var overview: String
-	var releaseDate: String
+	var releaseDate: String?
 	var genres: [ApiGenre]
 	var runtime: Int?
 	var popularity: Float
@@ -58,7 +58,7 @@ struct MovieDetails: GridElement, Codable, Hashable {
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd"
 		
-		guard let date = formatter.date(from: releaseDate) else {
+		guard let releaseDate = releaseDate, let date = formatter.date(from: releaseDate) else {
 			return "–"
 		}
 		
