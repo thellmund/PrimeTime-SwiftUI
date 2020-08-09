@@ -11,15 +11,20 @@ import Combine
 
 class GenresStore: ObservableObject {
 	
+	private let apiService: TMDBApiService
+	
 	@Published private(set) var genres: [Genre] {
 		didSet {
 			UserDefaults.standard.set(genres.encoded, forKey: "genres")
 		}
 	}
 	
-	init() {
-		genres = UserDefaults.standard.decodableArray(forKey: "genres") ?? []
+	init(apiService: TMDBApiService = RealTMDBApiService()) {
+		self.apiService = apiService
+		self.genres = UserDefaults.standard.decodableArray(forKey: "genres") ?? []
+		self.fetchGenres()
 	}
+	
 	
 	var favorites: [Genre] {
 		genres.filter { $0.preference == .favorite }
@@ -30,7 +35,10 @@ class GenresStore: ObservableObject {
 	}
 	
 	func store(_ apiGenres: [ApiGenre]) {
-		genres = apiGenres.map { Genre(from: $0) }
+		let existingGenreIDs = Set(genres.map(\.id))
+		let newApiGenres = apiGenres.filter { existingGenreIDs.contains($0.id) }
+		let newGenres = newApiGenres.map { Genre(from: $0) }
+		genres.append(contentsOf: newGenres)
 	}
 	
 	func storeFavorites(_ favorites: [Genre]) {
@@ -50,5 +58,12 @@ class GenresStore: ObservableObject {
 		
 		let newGenre = genre.withPreference(preference)
 		genres.insert(newGenre, at: index)
+	}
+	
+	private func fetchGenres() {
+		apiService.fetch(Endpoint.genres.url) { (result: ApiResult<GenresResponse>) in
+			guard case let .success(response) = result else { return }
+			self.store(response.genres)
+		}
 	}
 }

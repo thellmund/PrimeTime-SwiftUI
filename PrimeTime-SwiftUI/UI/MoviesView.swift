@@ -102,7 +102,7 @@ struct MovieDetailsView: View {
 					watchState: watchState,
 					imageFetcher: imageFetcher,
 					action: { toggleWatchState(for: movie) }
-				)
+				).padding(.bottom)
 				
 				MovieInformation(movie: movie)
 				Divider()
